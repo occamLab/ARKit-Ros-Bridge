@@ -18,9 +18,9 @@ Built For OccamLab @Olin College 2018
 
 ##### Running the streamer on an iOS device:
 
-(1) After cloning this repository, go to http://visp-doc.inria.fr/download/snapshot/ios/ and download and unzip the latest version of the visp3 framework.
+(1) After cloning this repository as arkit_streamer, go to http://visp-doc.inria.fr/download/snapshot/ios/ and download and unzip the latest version of the visp3 framework.
 
-(2) In Finder, drag the `opencv2.framework` and `visp3.framework` frameworks into your local AprilTagDetector folder.
+(2) In Finder, drag the `opencv2.framework` and `visp3.framework` frameworks into your local arkit_streamer folder.
 
 (3) Open the `AprilTagDetector.xcodeproj` folder in Xcode. For reference, the streamer was originally developed in Xcode 9.4.1. 
 
