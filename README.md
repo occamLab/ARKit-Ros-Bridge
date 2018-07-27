@@ -11,7 +11,8 @@ Built For OccamLab @Olin College 2018
 (1) Enter your catkin workspace directory (For directions on creating a catkin workspace, see "First Time Setup" below.) and clone this repository into `catkin_ws/src` as arkit_streamer.
 
 (2) In your `catkin_ws/src` directory, you will need to run `catkin_create_pkg arkit_streamer`. Then, in your `CMakeLists.txt` file in the `arkit_streamer` directory, you will need to modify your requirements to read:
-``` find_package(catkin REQUIRED COMPONENTS
+``` 
+  find_package(catkin REQUIRED COMPONENTS
   apriltags_ros
   geometry_msgs
   rospy
@@ -20,7 +21,8 @@ Built For OccamLab @Olin College 2018
 )
 ```
 You will also need to add `geometry_msgs` and `sensor_msgs` to the dependencies. In your `package.xml` file, you will need to copy the following below the line reading `<buildtool_depend>catkin</buildtool_depend>`:
-  ```<build_depend>apriltags_ros</build_depend>
+  ```
+    <build_depend>apriltags_ros</build_depend>
     <build_depend>geometry_msgs</build_depend>
     <build_depend>rospy</build_depend>
     <build_depend>sensor_msgs</build_depend>
