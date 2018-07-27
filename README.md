@@ -37,7 +37,7 @@ You will also need to add `geometry_msgs` and `sensor_msgs` to the dependencies.
     <exec_depend>rospy</exec_depend>
     <exec_depend>sensor_msgs</exec_depend>
     <exec_depend>std_msgs</exec_depend>
-    ```
+  ```
 
 (2) Run `roscore` in your terminal
 
