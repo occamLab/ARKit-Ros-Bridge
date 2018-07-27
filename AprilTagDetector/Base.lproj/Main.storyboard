@@ -31,7 +31,7 @@
                                 </constraints>
                             </arscnView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="WYR-CP-1iV">
-                                <rect key="frame" x="36" y="209" width="84" height="109"/>
+                                <rect key="frame" x="36" y="219.5" width="84" height="109"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pose" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bS1-bq-RNj">
                                         <rect key="frame" x="0.0" y="0.0" width="84" height="23"/>
@@ -53,8 +53,8 @@
                                     </label>
                                 </subviews>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="Dg2-sg-mPK">
-                                <rect key="frame" x="16" y="30" width="343" height="164"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="Dg2-sg-mPK">
+                                <rect key="frame" x="16" y="30" width="343" height="174.5"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pG8-4h-oOJ">
                                         <rect key="frame" x="137" y="0.0" width="69" height="49"/>
@@ -64,14 +64,15 @@
                                             <action selector="startButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="C1o-Gq-mTp"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello, and Welcome to the April Tag Detector! Please enter your ip address and press start to begin." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3ZM-4p-dPO">
-                                        <rect key="frame" x="6.5" y="61" width="330.5" height="61"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3ZM-4p-dPO">
+                                        <rect key="frame" x="6.5" y="56" width="330.5" height="81.5"/>
+                                        <string key="text">Hello, and Welcome to the April Tag Detector! Please enter your ip address and press start to begin. Tap anywhere on the screen to update the ip address.</string>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="IP Address" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Mah-T2-Gvj">
-                                        <rect key="frame" x="126.5" y="134" width="90" height="30"/>
+                                        <rect key="frame" x="126.5" y="144.5" width="90" height="30"/>
                                         <nil key="textColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
@@ -79,7 +80,7 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Niq-55-NPS">
-                                <rect key="frame" x="290" y="209" width="49" height="109"/>
+                                <rect key="frame" x="290" y="219.5" width="49" height="109"/>
                                 <subviews>
                                     <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="eeY-wl-uhG">
                                         <rect key="frame" x="0.0" y="0.0" width="51" height="31"/>
