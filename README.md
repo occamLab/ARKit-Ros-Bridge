@@ -8,11 +8,11 @@ Built For OccamLab @Olin College 2018
 
 ##### Setting up your computer to run the streamer with ROS:
 
-(1) Enter your catkin workspace directory (For directions on creating a catkin workspace, see "First Time Setup" below.) and clone this repository into `catkin_ws/src`.
+(1) Enter your catkin workspace directory (For directions on creating a catkin workspace, see "First Time Setup" below.) and clone this repository into `catkin_ws/src` as arkit_streamer.
 
 (2) Run `roscore` in your terminal
 
-(3) Open a new terminal window and run `roslaunch ios_streamer stream.launch`
+(3) Open a new terminal window and run `roslaunch arkit_streamer stream.launch`
 
 (4) To view different visualizations of the data being streamed, you may choose to run either `rosrun rqt_gui rqt_gui` or `rviz` in another terminal window. In rviz, you will see two frames appear when an april tag is detected if you send the phone's pose, camera feed, and the april tags it detects to ROS. The first will be called tag_(insert number), which represents april tags detected by the apriltags_ros package, and the second will be called ios_tag_(insert number), which represents april tags detected by the visual servoing platform on the iPhone itself.
 
