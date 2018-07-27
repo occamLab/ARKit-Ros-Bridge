@@ -79,7 +79,7 @@ class AprilTagServer:
                 self.br.sendTransform([tag.pose.pose.position.x, tag.pose.pose.position.y, tag.pose.pose.position.z],
                                       [tag.pose.pose.orientation.x, tag.pose.pose.orientation.y, tag.pose.pose.orientation.z, tag.pose.pose.orientation.w],
                                        tag.pose.header.stamp,
-                                      "ios_tag_" + str(tag.id),
+                                      "tag_" + str(tag.id),
                                       "camera")
 
             self.pub_tags.publish(self.msg)
