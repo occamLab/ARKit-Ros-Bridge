@@ -1,6 +1,6 @@
 # ARKit ROS Bridge
 
-This will stream pose data from an iOS device to a computer via UDP in order to manipulate the data in ROS. Currently, the iOS-ROS streamer sends pose and camera data between the devices.
+This will stream data from an iOS device to a computer via UDP in order to manipulate the data in ROS.
 
 Built For OccamLab @Olin College 2018
 
