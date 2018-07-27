@@ -1,17 +1,17 @@
 <launch>
 
-  <node pkg="ios_streamer" type="pose_server.py" name="pose_server" output="screen">
+  <node pkg="arkit_streamer" type="pose_server.py" name="pose_server" output="screen">
    <param name="port_number" value="35601" type="int"/>
    <param name="pose_topic" value="ios_pose"/>
    <param name="coordinate_frame" value="odom"/>
   </node>
 
-  <node pkg="ios_streamer" type="image_server.py" name="image_server" output="screen">
+  <node pkg="arkit_streamer" type="image_server.py" name="image_server" output="screen">
    <param name="port_number" value="35602" type="int"/>
    <param name="camera_name" value="camera"/>
  </node>
 
- <node pkg="ios_streamer" type="aprilTag_server.py" name="aprilTag_server" output="screen">
+ <node pkg="arkit_streamer" type="aprilTag_server.py" name="aprilTag_server" output="screen">
   <param name="port_number" value="35603" type="int"/>
 </node>
 

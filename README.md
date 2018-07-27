@@ -10,6 +10,33 @@ Built For OccamLab @Olin College 2018
 
 (1) Enter your catkin workspace directory (For directions on creating a catkin workspace, see "First Time Setup" below.) and clone this repository into `catkin_ws/src` as arkit_streamer.
 
+(2) In your `catkin_ws/src` directory, you will need to run `catkin_create_pkg arkit_streamer`. Then, in your `CMakeLists.txt` file in the `arkit_streamer` directory, you will need to modify your requirements to read:
+``` find_package(catkin REQUIRED COMPONENTS
+  apriltags_ros
+  geometry_msgs
+  rospy
+  sensor_msgs
+  std_msgs
+)
+```
+You will also need to add `geometry_msgs` and `sensor_msgs` to the dependencies. In your `package.xml` file, you will need to copy the following below the line reading `<buildtool_depend>catkin</buildtool_depend>`:
+  ```<build_depend>apriltags_ros</build_depend>
+    <build_depend>geometry_msgs</build_depend>
+    <build_depend>rospy</build_depend>
+    <build_depend>sensor_msgs</build_depend>
+    <build_depend>std_msgs</build_depend>
+    <build_export_depend>apriltags_ros</build_export_depend>
+    <build_export_depend>geometry_msgs</build_export_depend>
+    <build_export_depend>rospy</build_export_depend>
+    <build_export_depend>sensor_msgs</build_export_depend>
+    <build_export_depend>std_msgs</build_export_depend>
+    <exec_depend>apriltags_ros</exec_depend>
+    <exec_depend>geometry_msgs</exec_depend>
+    <exec_depend>rospy</exec_depend>
+    <exec_depend>sensor_msgs</exec_depend>
+    <exec_depend>std_msgs</exec_depend>
+    ```
+
 (2) Run `roscore` in your terminal
 
 (3) Open a new terminal window and run `roslaunch arkit_streamer stream.launch`
@@ -22,7 +49,7 @@ Built For OccamLab @Olin College 2018
 
 (2) In Finder, drag the `opencv2.framework` and `visp3.framework` frameworks into your local arkit_streamer folder.
 
-(3) Open the `AprilTagDetector.xcodeproj` folder in Xcode. For reference, the streamer was originally developed in Xcode 9.4.1. 
+(3) Open the `AprilTagDetector.xcodeproj` folder in Xcode. For reference, the streamer was originally developed in Xcode 9.4.1.
 
 (4) If you have an iOS developer account, go to Project Settings, and under General, select your team and signing certificate. If you do not have an iOS developer account, you can create one by following the instructions found https://developer.apple.com/programs/enroll/.
 

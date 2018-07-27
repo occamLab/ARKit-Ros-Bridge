@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-OccamLab: iOS ROS Bridge - April Tag Server
+OccamLab: ARKit ROS Bridge - April Tag Server
 author: @danielconnolly
 '''
 

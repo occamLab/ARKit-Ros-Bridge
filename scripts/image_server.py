@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-OccamLab: iOS ROS Bridge - Image Server
+OccamLab: ARKit ROS Bridge - Image Server
 author: @danielconnolly
 '''
 

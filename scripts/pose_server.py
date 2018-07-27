@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-OccamLab: iOS ROS Bridge - Pose Server
+OccamLab: ARKit ROS Bridge - Pose Server
 author: @danielconnolly
 '''
 

@@ -1,5 +1,5 @@
 '''
-OccamLab: iOS ROS Bridge - Extract UDP Data
+OccamLab: ARKit ROS Bridge - Extract UDP Data
 '''
 
 import socket
