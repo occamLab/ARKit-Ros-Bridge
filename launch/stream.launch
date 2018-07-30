@@ -15,6 +15,9 @@
   <param name="port_number" value="35603" type="int"/>
 </node>
 
+<node pkg="arkit_streamer" type="phone_type_server.py" name="phone_type_server" output="screen">
+</node>
+
 <!-- <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector" output="screen" ns="camera_lowres"> -->
   <!-- Remap topic required by the node to custom topics -->
   <!-- <remap from="image_rect" to="image_raw" />

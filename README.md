@@ -11,22 +11,33 @@ Built For OccamLab @Olin College 2018
 (1) Enter your catkin workspace directory (For directions on creating a catkin workspace, see "First Time Setup" below.) and clone this repository into `catkin_ws/src` as arkit_streamer.
 
 (2) In your `catkin_ws/src` directory, you will need to run `catkin_create_pkg arkit_streamer`. Then, in your `CMakeLists.txt` file in the `arkit_streamer` directory, you will need to modify your requirements to read:
-``` 
+```
   find_package(catkin REQUIRED COMPONENTS
   apriltags_ros
   geometry_msgs
   rospy
   sensor_msgs
   std_msgs
+  message_generation
 )
 ```
-You will also need to add `geometry_msgs` and `sensor_msgs` to the dependencies. In your `package.xml` file, you will need to copy the following below the line reading `<buildtool_depend>catkin</buildtool_depend>`:
+You will also need to uncomment the dependencies and add `geometry_msgs` and `sensor_msgs`. Furthermore, you will need to uncomment the following lines:
+```
+add_service_files(
+ FILES
+ Service1.srv
+ Service2.srv
+)
+```
+And replace the placeholder `Service*.srv` with `phone.srv`.
+Finally, in your `package.xml` file, you will need to copy the following below the line reading `<buildtool_depend>catkin</buildtool_depend>`:
   ```
     <build_depend>apriltags_ros</build_depend>
     <build_depend>geometry_msgs</build_depend>
     <build_depend>rospy</build_depend>
     <build_depend>sensor_msgs</build_depend>
     <build_depend>std_msgs</build_depend>
+    <build_depend>message_generation</build_depend>
     <build_export_depend>apriltags_ros</build_export_depend>
     <build_export_depend>geometry_msgs</build_export_depend>
     <build_export_depend>rospy</build_export_depend>
@@ -37,6 +48,7 @@ You will also need to add `geometry_msgs` and `sensor_msgs` to the dependencies.
     <exec_depend>rospy</exec_depend>
     <exec_depend>sensor_msgs</exec_depend>
     <exec_depend>std_msgs</exec_depend>
+    <exec_depend>message_runtime</exec_depend>
   ```
 
 (3) Run `roscore` in your terminal
