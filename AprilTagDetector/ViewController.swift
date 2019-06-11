@@ -43,6 +43,7 @@ class ViewController: UIViewController {
     }
     
     /// Resigns keyboard when screen is tapped
+    @objc
     func dismissKeyboard() {
         view.endEditing(true)
         setupUdpConnections()
@@ -108,6 +109,7 @@ class ViewController: UIViewController {
     }
     
     /// Initializes timers to send data at regular intervals
+    @objc
     func scheduledTimerToTransmitData() {
         print("Checking to see what to transmit")
         poseTimer.invalidate()
@@ -154,7 +156,8 @@ class ViewController: UIViewController {
         let intrinsics = getCameraIntrinsics()
         let MTU = 1350
         let (image, stampedTime) = getVideoFrames()
-        let imageData = UIImageJPEGRepresentation(image, 0)
+        // let imageData = UIImageJPEGRepresentation(image, 0)
+        let imageData = image.jpegData(compressionQuality: 0)
         let frameTime = String(stampedTime).data(using: .utf8)!
         let timeAndIntrinsics = frameTime + intrinsics
         var bytesSent = 0           // Keeps track of how much of the image has been sent
@@ -162,7 +165,7 @@ class ViewController: UIViewController {
         
         while bytesSent < imageData!.count {
             // Construct the range for the packet
-            let range = Range(bytesSent..<min(bytesSent + MTU, imageData!.count))
+            let range = (bytesSent..<min(bytesSent + MTU, imageData!.count))
             var udpPacketPayload = imageData!.subdata(in: range)
             udpPacketPayload.insert(UInt8(imageIndex % (Int(UInt8.max) + 1)), at: 0)
             udpPacketPayload.insert(UInt8(packetIndex), at: 1)
