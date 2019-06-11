@@ -156,7 +156,6 @@ class ViewController: UIViewController {
         let intrinsics = getCameraIntrinsics()
         let MTU = 1350
         let (image, stampedTime) = getVideoFrames()
-        // let imageData = UIImageJPEGRepresentation(image, 0)
         let imageData = image.jpegData(compressionQuality: 0)
         let frameTime = String(stampedTime).data(using: .utf8)!
         let timeAndIntrinsics = frameTime + intrinsics
