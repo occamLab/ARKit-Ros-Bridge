@@ -43,8 +43,7 @@ class ViewController: UIViewController {
     }
     
     /// Resigns keyboard when screen is tapped
-    @objc
-    func dismissKeyboard() {
+    @objc func dismissKeyboard() {
         view.endEditing(true)
         setupUdpConnections()
     }
@@ -109,8 +108,7 @@ class ViewController: UIViewController {
     }
     
     /// Initializes timers to send data at regular intervals
-    @objc
-    func scheduledTimerToTransmitData() {
+    @objc func scheduledTimerToTransmitData() {
         print("Checking to see what to transmit")
         poseTimer.invalidate()
         poseTimer = Timer()
