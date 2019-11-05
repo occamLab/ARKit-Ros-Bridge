@@ -48,6 +48,7 @@ class PoseServer:
         ROS_timestamp = rospy.Time.now()
         if not self.ios_clock_valid:
             self.ios_clock_offset = ROS_timestamp.to_time() - float(self.ios_timestamp)
+            self.ios_clock_valid = True
         self.pub_clock.publish(self.ios_clock_offset)
         self.msg.header.stamp = rospy.Time(self.ios_clock_offset + float(self.ios_timestamp))
 
