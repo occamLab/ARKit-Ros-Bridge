@@ -21,9 +21,13 @@
 		AD95827C20F6825D0099DA98 /* TagFinder.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD95827B20F6825D0099DA98 /* TagFinder.mm */; };
 		AD95827F20F683E90099DA98 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95827E20F683E90099DA98 /* ViewController.swift */; };
 		AD95828120F689EB0099DA98 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD95828020F689EB0099DA98 /* AppDelegate.swift */; };
+		FE515152CFFFA4838D32DC70 /* Pods_AprilTagDetector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E577BDCFA79F972F60E2FC7 /* Pods_AprilTagDetector.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0BBDE9D76809B8A9A3E77FEE /* Pods-AprilTagDetector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AprilTagDetector.release.xcconfig"; path = "Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector.release.xcconfig"; sourceTree = "<group>"; };
+		0E577BDCFA79F972F60E2FC7 /* Pods_AprilTagDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AprilTagDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4AADFF49867879DA2A46D359 /* Pods-AprilTagDetector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AprilTagDetector.debug.xcconfig"; path = "Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector.debug.xcconfig"; sourceTree = "<group>"; };
 		4BC3FE231F876BE9006A29FB /* AprilTagDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AprilTagDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC3FE271F876BE9006A29FB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4BC3FE301F876BE9006A29FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -53,12 +57,23 @@
 			files = (
 				AD3CF3AA20F696ED00D6A7C0 /* opencv2.framework in Frameworks */,
 				AD3CF3A920F696E100D6A7C0 /* visp3.framework in Frameworks */,
+				FE515152CFFFA4838D32DC70 /* Pods_AprilTagDetector.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		35B728A5EA38325C8A56A920 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4AADFF49867879DA2A46D359 /* Pods-AprilTagDetector.debug.xcconfig */,
+				0BBDE9D76809B8A9A3E77FEE /* Pods-AprilTagDetector.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		4BC3FE1A1F876BE9006A29FB = {
 			isa = PBXGroup;
 			children = (
@@ -67,6 +82,7 @@
 				4BC3FE251F876BE9006A29FB /* AprilTagDetector */,
 				4BC3FE241F876BE9006A29FB /* Products */,
 				AD3CF3A820F696E100D6A7C0 /* Frameworks */,
+				35B728A5EA38325C8A56A920 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -113,6 +129,7 @@
 		AD3CF3A820F696E100D6A7C0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0E577BDCFA79F972F60E2FC7 /* Pods_AprilTagDetector.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -124,9 +141,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4BC3FE3A1F876BE9006A29FB /* Build configuration list for PBXNativeTarget "AprilTagDetector" */;
 			buildPhases = (
+				01FB7930F5C3FEDEA1D312DF /* [CP] Check Pods Manifest.lock */,
 				4BC3FE1F1F876BE9006A29FB /* Sources */,
 				4BC3FE201F876BE9006A29FB /* Frameworks */,
 				4BC3FE211F876BE9006A29FB /* Resources */,
+				762C790EF272379B04A2870A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -186,6 +205,63 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		01FB7930F5C3FEDEA1D312DF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AprilTagDetector-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		762C790EF272379B04A2870A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/abseil/absl.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
+				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
+				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl_grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/absl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4BC3FE1F1F876BE9006A29FB /* Sources */ = {
@@ -338,6 +414,7 @@
 		};
 		4BC3FE3B1F876BE9006A29FB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4AADFF49867879DA2A46D359 /* Pods-AprilTagDetector.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -352,7 +429,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/AprilTagDetector/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = MyOrg.AprilTagDetector;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.InvisibleMap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "./AprilTagDetector/TagFinder-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -362,6 +439,7 @@
 		};
 		4BC3FE3C1F876BE9006A29FB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0BBDE9D76809B8A9A3E77FEE /* Pods-AprilTagDetector.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -376,7 +454,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/AprilTagDetector/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = MyOrg.AprilTagDetector;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.InvisibleMap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "./AprilTagDetector/TagFinder-Swift.h";
 				SWIFT_VERSION = 4.0;
