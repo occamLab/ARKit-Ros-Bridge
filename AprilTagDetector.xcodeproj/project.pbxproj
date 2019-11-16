@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		23C214AF23808AB1007B2DA5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 23C214AE23808AB1007B2DA5 /* GoogleService-Info.plist */; };
 		4BC3FE281F876BE9006A29FB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC3FE271F876BE9006A29FB /* main.m */; };
 		4BC3FE311F876BE9006A29FB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BC3FE2F1F876BE9006A29FB /* Main.storyboard */; };
 		4BC3FE331F876BE9006A29FB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BC3FE321F876BE9006A29FB /* Assets.xcassets */; };
@@ -27,6 +28,7 @@
 /* Begin PBXFileReference section */
 		0BBDE9D76809B8A9A3E77FEE /* Pods-AprilTagDetector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AprilTagDetector.release.xcconfig"; path = "Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector.release.xcconfig"; sourceTree = "<group>"; };
 		0E577BDCFA79F972F60E2FC7 /* Pods_AprilTagDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AprilTagDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		23C214AE23808AB1007B2DA5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4AADFF49867879DA2A46D359 /* Pods-AprilTagDetector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AprilTagDetector.debug.xcconfig"; path = "Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector.debug.xcconfig"; sourceTree = "<group>"; };
 		4BC3FE231F876BE9006A29FB /* AprilTagDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AprilTagDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC3FE271F876BE9006A29FB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -70,7 +72,6 @@
 				4AADFF49867879DA2A46D359 /* Pods-AprilTagDetector.debug.xcconfig */,
 				0BBDE9D76809B8A9A3E77FEE /* Pods-AprilTagDetector.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -97,6 +98,7 @@
 		4BC3FE251F876BE9006A29FB /* AprilTagDetector */ = {
 			isa = PBXGroup;
 			children = (
+				23C214AE23808AB1007B2DA5 /* GoogleService-Info.plist */,
 				AD95828020F689EB0099DA98 /* AppDelegate.swift */,
 				4BFC47141F876DEA00C8764A /* AprilTag.png */,
 				4BC3FE3D1F876C27006A29FB /* ImageConversion.h */,
@@ -199,6 +201,7 @@
 			files = (
 				4BC3FE361F876BE9006A29FB /* LaunchScreen.storyboard in Resources */,
 				4BC3FE331F876BE9006A29FB /* Assets.xcassets in Resources */,
+				23C214AF23808AB1007B2DA5 /* GoogleService-Info.plist in Resources */,
 				4BC3FE311F876BE9006A29FB /* Main.storyboard in Resources */,
 				4BFC47151F876DEA00C8764A /* AprilTag.png in Resources */,
 			);
@@ -236,23 +239,15 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/BoringSSL-GRPC/openssl_grpc.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
-				"${BUILT_PRODUCTS_DIR}/abseil/absl.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-C++/grpcpp.framework",
-				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl_grpc.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/absl.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpcpp.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -425,7 +420,10 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_NO_COMMON_BLOCKS = NO;
-				HEADER_SEARCH_PATHS = "${SDK_DIR}/usr/include/libxml2";
+				HEADER_SEARCH_PATHS = (
+					"${SDK_DIR}/usr/include/libxml2",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/AprilTagDetector/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -450,7 +448,10 @@
 					"$(PROJECT_DIR)",
 				);
 				GCC_NO_COMMON_BLOCKS = NO;
-				HEADER_SEARCH_PATHS = "${SDK_DIR}/usr/include/libxml2";
+				HEADER_SEARCH_PATHS = (
+					"${SDK_DIR}/usr/include/libxml2",
+					"$(inherited)",
+				);
 				INFOPLIST_FILE = "$(SRCROOT)/AprilTagDetector/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

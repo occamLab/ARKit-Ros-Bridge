@@ -8,6 +8,8 @@
 
 import UIKit
 import ARKit
+import FirebaseDatabase
+import FirebaseStorage
 
 class ViewController: UIViewController {
 
@@ -34,12 +36,36 @@ class ViewController: UIViewController {
     let f = imageToData()
     let aprilTagQueue = DispatchQueue(label: "edu.occamlab.apriltagfinder", qos: DispatchQoS.userInitiated)
     
+    var firebaseRef: DatabaseReference!
+    var firebaseStorage: Storage!
+    var firebaseStorageRef: StorageReference!
+    
     /// Begin an ARSession when the app first loads
     override func viewDidLoad() {
         super.viewDidLoad()
         startSession()
+        firebaseRef = Database.database().reference()
+        firebaseStorage = Storage.storage()
+        firebaseStorageRef = firebaseStorage.reference()
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
+    }
+    
+    func writeMapToFirebase(mapName: String, mapImage: UIImage, mapJsonFile: [String: Any]) {
+        let imagePath = "images/" + mapName + ".jpg"
+        let filePath = "files/" + mapName + ".json"
+        
+        // TODO: handle errors when failing to upload image and json file
+        // Upload image
+        firebaseStorageRef.child(imagePath).putData(UIImageJPEGRepresentation(mapImage, 0)!, metadata: StorageMetadata(dictionary: ["contentType": "image/jpeg"]))
+
+        // Upload result json
+        if let jsonData = try? JSONSerialization.data(withJSONObject: mapJsonFile, options: []) {
+            firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"]))
+        }
+
+        // Write to maps node in database
+        firebaseRef.child("maps").child(mapName).setValue(["image": imagePath, "map_file": filePath])
     }
     
     /// Resigns keyboard when screen is tapped

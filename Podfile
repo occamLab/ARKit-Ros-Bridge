@@ -7,7 +7,8 @@ target 'AprilTagDetector' do
 
   # Pods for AprilTagDetector# Add the Firebase pod for Google Analytics
   # Add the Firebase pod for Google Analytics
+  pod 'Firebase'
   pod 'Firebase/Analytics'
   pod 'Firebase/Database'
-
+  pod 'Firebase/Storage'
 end
