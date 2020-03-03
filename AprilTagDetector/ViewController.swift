@@ -3,7 +3,7 @@
 //  AprilTagDetector
 //
 //  Created by djconnolly27 on 7/11/18.
-//  Copyright © 2018 OccamLab. All rights reserved.
+//  Copyright © 2020 OccamLab. All rights reserved.
 //
 
 import UIKit
@@ -17,10 +17,7 @@ class ViewController: UIViewController {
 
     @IBOutlet var sceneView: ARSCNView!
     
-    @IBOutlet weak var ipAddressText: UITextField!
-    
     @IBOutlet var poseSwitch: UISwitch!
-    @IBOutlet var imageSwitch: UISwitch!
     @IBOutlet var aprilTagSwitch: UISwitch!
     
     var broadcastTags: UDPBroadcastConnection!
@@ -28,13 +25,13 @@ class ViewController: UIViewController {
     var broadcastImagesConnection: UDPBroadcastConnection!
     
     var poseTimer = Timer()
-    var imageTimer = Timer()
     var tagFinderTimer = Timer()
     
     var isProcessingFrame = false
-    var imageIndex = 0                 // this is the sequence number in the image stream
     let f = imageToData()
     let aprilTagQueue = DispatchQueue(label: "edu.occamlab.apriltagfinder", qos: DispatchQoS.userInitiated)
+    var tagData:[String] = []
+    var poseData:[String] = []
     
     var firebaseRef: DatabaseReference!
     var firebaseStorage: Storage!
@@ -44,34 +41,14 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         startSession()
-        firebaseRef = Database.database().reference()
-        firebaseStorage = Storage.storage()
-        firebaseStorageRef = firebaseStorage.reference()
+        initFirebase()
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
     }
     
-    func writeMapToFirebase(mapName: String, mapImage: UIImage, mapJsonFile: [String: Any]) {
-        let imagePath = "images/" + mapName + ".jpg"
-        let filePath = "files/" + mapName + ".json"
-        
-        // TODO: handle errors when failing to upload image and json file
-        // Upload image
-        firebaseStorageRef.child(imagePath).putData(UIImageJPEGRepresentation(mapImage, 0)!, metadata: StorageMetadata(dictionary: ["contentType": "image/jpeg"]))
-
-        // Upload result json
-        if let jsonData = try? JSONSerialization.data(withJSONObject: mapJsonFile, options: []) {
-            firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"]))
-        }
-
-        // Write to maps node in database
-        firebaseRef.child("maps").child(mapName).setValue(["image": imagePath, "map_file": filePath])
-    }
-    
-    /// Resigns keyboard when screen is tapped
+    /// Resign keyboard when screen is tapped
     @objc func dismissKeyboard() {
         view.endEditing(true)
-        setupUdpConnections()
     }
     
     /// Initialize the ARSession
@@ -80,89 +57,108 @@ class ViewController: UIViewController {
         sceneView.session.run(configuration)
     }
     
-    /// Initializes UDP connections for sending data to ROS
-    func setupUdpConnections() {
-        let INADDR_BROADCAST = in_addr(s_addr: inet_addr(ipAddressText.text))
-        
-        broadcastPoseConnection = UDPBroadcastConnection(port: Config.Ports.broadcast, ip: INADDR_BROADCAST) {(port: Int, response: [UInt8]) -> Void in
-            print("Received from \(INADDR_BROADCAST):\(port):\n\n\(response)")
-        }
-        
-        broadcastImagesConnection = UDPBroadcastConnection(port: Config.Ports.broadcastImages, ip: INADDR_BROADCAST) {(port: Int, response: [UInt8]) -> Void in
-            print("Received from \(INADDR_BROADCAST):\(port):\n\n\(response)")
-        }
-        
-        broadcastTags = UDPBroadcastConnection(port: Config.Ports.broadcastAprilTags, ip: INADDR_BROADCAST) {(port: Int, response: [UInt8]) -> Void in
-            print("Received from \(INADDR_BROADCAST):\(port):\n\n\(response)")
-        }
+    /// Initialize firebase reference
+    func initFirebase() {
+        firebaseRef = Database.database().reference()
+        firebaseStorage = Storage.storage()
+        firebaseStorageRef = firebaseStorage.reference()
     }
     
-    /// Sends selected types of data to ROS when button is pressed
+    /// Send selected types of data to ROS when button is pressed
     @IBAction func startButtonTapped(_ sender: UIButton) {
         if sender.currentTitle == "Start" {
             sender.setTitle("Stop", for: .normal)
+            clearData()
             
             if poseSwitch.isOn {
-                poseTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.transmitPoseData), userInfo: nil, repeats: true)
-            }
-            if imageSwitch.isOn {
-                imageTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.transmitImages), userInfo: nil, repeats: true)
+                poseTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordPoseData), userInfo: nil, repeats: true)
             }
             if aprilTagSwitch.isOn {
-                tagFinderTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.transmitTags), userInfo: nil, repeats: true)
+                tagFinderTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordTags), userInfo: nil, repeats: true)
             }
 
-            poseSwitch.addTarget(self, action: #selector(scheduledTimerToTransmitData), for: .valueChanged)
-            imageSwitch.addTarget(self, action: #selector(scheduledTimerToTransmitData), for: .valueChanged)
-            aprilTagSwitch.addTarget(self, action: #selector(scheduledTimerToTransmitData), for: .valueChanged)
+            poseSwitch.addTarget(self, action: #selector(scheduledTimerToRecordData), for: .valueChanged)
+            aprilTagSwitch.addTarget(self, action: #selector(scheduledTimerToRecordData), for: .valueChanged)
         }
         else {
             sender.setTitle("Start", for: .normal)
             poseTimer.invalidate()
             poseTimer = Timer()
-            poseSwitch.removeTarget(self, action: #selector(scheduledTimerToTransmitData), for: .valueChanged)
-
-            imageTimer.invalidate()
-            imageTimer = Timer()
-            imageSwitch.removeTarget(self, action: #selector(scheduledTimerToTransmitData), for: .valueChanged)
+            poseSwitch.removeTarget(self, action: #selector(scheduledTimerToRecordData), for: .valueChanged)
             
             tagFinderTimer.invalidate()
             tagFinderTimer = Timer()
-            aprilTagSwitch.removeTarget(self, action: #selector(scheduledTimerToTransmitData), for: .valueChanged)
+            aprilTagSwitch.removeTarget(self, action: #selector(scheduledTimerToRecordData), for: .valueChanged)
+            
+            popUpSaveView()
         }
 
     }
     
-    /// Initializes timers to send data at regular intervals
-    @objc func scheduledTimerToTransmitData() {
+    /// Clear tag and pose data
+    @objc func clearData() {
+        tagData = []
+        poseData = []
+    }
+    
+    /// Initialize timers to record data at regular intervals
+    @objc func scheduledTimerToRecordData() {
         print("Checking to see what to transmit")
         poseTimer.invalidate()
         poseTimer = Timer()
 
         if poseSwitch.isOn {
-            poseTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.transmitPoseData), userInfo: nil, repeats: true)
+            poseTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordPoseData), userInfo: nil, repeats: true)
         }
-        imageTimer.invalidate()
-        imageTimer = Timer()
 
-        if imageSwitch.isOn {
-            imageTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.transmitImages), userInfo: nil, repeats: true)
-        }
         tagFinderTimer.invalidate()
         tagFinderTimer = Timer()
 
         if aprilTagSwitch.isOn {
-            tagFinderTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.transmitTags), userInfo: nil, repeats: true)
+            tagFinderTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordTags), userInfo: nil, repeats: true)
         }
     }
     
-    /// Sends the pose data to ROS
-    @objc func transmitPoseData() {
-        broadcastPoseConnection.sendBroadcast(getCameraCoordinates())
+    /// Pop up a view to let the user name their map.
+    @objc func popUpSaveView() {
+        // TODO: Create a real pop up view!
+        let mapName = "-Test"
+        sendToFirebase(mapName: mapName)
     }
     
-    /// Sends the april tag data to ROS
-    @objc func transmitTags() {
+    /// Upload pose data, last image frame to Firebase under "maps" and "unprocessed_maps" nodes
+    func sendToFirebase(mapName: String) {
+        let (mapImage, timestamp) = getVideoFrames()
+        let mapId = String(timestamp).replacingOccurrences(of: ".", with: "") + mapName
+        let mapJsonFile: [String: Any] = ["map_id": mapId, "camera_intrinsics": getCameraIntrinsics(), "pose_data": poseData, "tag_data": tagData]
+        
+        let imagePath = "images/" + mapId + ".jpg"
+        let filePath = "raw_files/" + mapId + ".json"
+        
+        // TODO: handle errors when failing to upload image and json file
+        // TODO: let the user pick their image
+        // Upload the last image capture to Firebase
+        firebaseStorageRef.child(imagePath).putData(UIImageJPEGRepresentation(mapImage, 0)!, metadata: StorageMetadata(dictionary: ["contentType": "image/jpeg"]))
+
+        // Upload raw file json
+        if let jsonData = try? JSONSerialization.data(withJSONObject: mapJsonFile, options: []) {
+            firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"]))
+        }
+
+        // Write to maps node in database
+        firebaseRef.child("maps").child(mapId).setValue(["name": mapName, "image": imagePath, "raw_file": filePath])
+        
+        // Write to unprocessed maps node in database
+        firebaseRef.child("unprocessed_maps").child(mapId).setValue(filePath)
+    }
+    
+    /// Append new pose data to list
+    @objc func recordPoseData() {
+        poseData.append(getCameraCoordinates())
+    }
+    
+    /// Append new april tag data to list
+    @objc func recordTags() {
         if isProcessingFrame {
             return
         }
@@ -170,44 +166,15 @@ class ViewController: UIViewController {
         let (image, timeStamp) = getVideoFrames()
         let rotatedImage = imageRotatedByDegrees(oldImage: image, deg: 90)
         aprilTagQueue.async {
-            self.broadcastTags.sendBroadcast(self.getArTags(rotatedImage: rotatedImage, timeStamp: timeStamp))
+            let arTags = self.getArTags(rotatedImage: rotatedImage, timeStamp: timeStamp)
+            if !arTags.isEmpty {
+                self.tagData.append(arTags)
+            }
             self.isProcessingFrame = false
         }
     }
     
-    /// Sends the camera frames to ROS
-    @objc func transmitImages() {
-        let intrinsics = getCameraIntrinsics()
-        let MTU = 1350
-        let (image, stampedTime) = getVideoFrames()
-        let imageData = UIImageJPEGRepresentation(image, 0)
-        let frameTime = String(stampedTime).data(using: .utf8)!
-        let timeAndIntrinsics = frameTime + intrinsics
-        var bytesSent = 0           // Keeps track of how much of the image has been sent
-        var packetIndex = 0         // Packet number - so ROS can recompile the image in order
-        
-        while bytesSent < imageData!.count {
-            // Construct the range for the packet
-            let range = (bytesSent..<min(bytesSent + MTU, imageData!.count))
-            var udpPacketPayload = imageData!.subdata(in: range)
-            udpPacketPayload.insert(UInt8(imageIndex % (Int(UInt8.max) + 1)), at: 0)
-            udpPacketPayload.insert(UInt8(packetIndex), at: 1)
-            
-            if bytesSent == 0 {
-                let numPackets = (Float(imageData!.count) / Float(MTU)).rounded(.up)
-                udpPacketPayload.insert(UInt8(numPackets), at: 2)
-                udpPacketPayload.insert(UInt8(frameTime.count), at: 3)
-                udpPacketPayload.insert(UInt8(intrinsics.count), at: 4)
-                udpPacketPayload.insert(contentsOf: timeAndIntrinsics, at: 5)
-            }
-            broadcastImagesConnection.sendBroadcast(udpPacketPayload)
-            bytesSent += range.count
-            packetIndex += 1
-        }
-        imageIndex += 1
-    }
-    
-    /// Get video frames.
+    /// Get video frames
     func getVideoFrames() -> (UIImage, Double) {
         let cameraFrame = sceneView.session.currentFrame
         let stampedTime = cameraFrame?.timestamp
@@ -221,7 +188,7 @@ class ViewController: UIViewController {
         return (uiImage, stampedTime!)
     }
     
-    /// Get pose data (transformation matrix, time) and send to ROS.
+    /// Get pose data (transformation matrix, time)
     func getCameraCoordinates() -> String {
         let camera = sceneView.session.currentFrame?.camera
         let cameraTransform = camera?.transform
@@ -233,13 +200,13 @@ class ViewController: UIViewController {
         return fullMatrix
     }
     
-    /// Finds all april tags in the frame to send to ROS
+    /// Finds all april tags in the frame
     func getArTags(rotatedImage: UIImage, timeStamp: Double) -> String {
         let intrinsics = sceneView.session.currentFrame?.camera.intrinsics.columns
         f.findTags(rotatedImage, intrinsics!.1.y, intrinsics!.0.x, intrinsics!.2.y, intrinsics!.2.x)
         var tagArray: Array<AprilTags> = Array()
         let numTags = f.getNumberOfTags()
-        var poseMatrix = "START"
+        var poseMatrix = ""
         if numTags > 0 {
             for i in 0...f.getNumberOfTags()-1 {
                 tagArray.append(f.getTagAt(i))
@@ -253,8 +220,8 @@ class ViewController: UIViewController {
         return poseMatrix
     }
         
-    /// Get the camera intrinsics to send to ROS
-    func getCameraIntrinsics() -> Data {
+    /// Get the camera intrinsics
+    func getCameraIntrinsics() -> String {
         let camera = sceneView.session.currentFrame?.camera
         let intrinsics = camera?.intrinsics
         let columns = intrinsics?.columns
@@ -262,8 +229,8 @@ class ViewController: UIViewController {
         let width = res?.width
         let height = res?.height
         
-        return String(format: "%f,%f,%f,%f,%f,%f,%f", columns!.0.x, columns!.1.y, columns!.2.x, columns!.2.y, columns!.2.z, width!, height!).data(using: .utf8)!
-        }
+        return String(format: "%f,%f,%f,%f,%f,%f,%f", columns!.0.x, columns!.1.y, columns!.2.x, columns!.2.y, columns!.2.z, width!, height!)
+    }
     
     /// Rotates an image clockwise
     func imageRotatedByDegrees(oldImage: UIImage, deg degrees: CGFloat) -> UIImage {
