@@ -26,8 +26,9 @@ class ViewController: UIViewController {
     var isProcessingFrame = false
     let f = imageToData()
     let aprilTagQueue = DispatchQueue(label: "edu.occamlab.apriltagfinder", qos: DispatchQoS.userInitiated)
-    var tagData:[[Substring]] = []
-    var poseData:[[Substring]] = []
+    var tagData:[[Any]] = []
+    var poseData:[[Any]] = []
+    var poseId: Int = 0
     
     var firebaseRef: DatabaseReference!
     var firebaseStorage: Storage!
@@ -94,7 +95,7 @@ class ViewController: UIViewController {
     /// Upload pose data, last image frame to Firebase under "maps" and "unprocessed_maps" nodes
     func sendToFirebase(mapName: String) {
         let (cameraFrame, timestamp) = getCameraFrame()
-        let (mapImage, _) = convertToUIImage(cameraFrame: cameraFrame!, timestamp: timestamp!)
+        let mapImage = convertToUIImage(cameraFrame: cameraFrame!)
         let mapId = String(timestamp!).replacingOccurrences(of: ".", with: "") + mapName
         let mapJsonFile: [String: Any] = ["map_id": mapId, "camera_intrinsics": getCameraIntrinsics(), "pose_data": poseData, "tag_data": tagData]
         
@@ -121,28 +122,29 @@ class ViewController: UIViewController {
     @objc func recordData() {
         let (cameraFrame, timestamp) = getCameraFrame()
         if cameraFrame != nil {
-            recordPoseData(cameraFrame: cameraFrame!, timestamp: timestamp!)
-            recordTags(cameraFrame: cameraFrame!, timestamp: timestamp!)
+            recordPoseData(cameraFrame: cameraFrame!, timestamp: timestamp!, poseId: poseId)
+            recordTags(cameraFrame: cameraFrame!, timestamp: timestamp!, poseId: poseId)
+            poseId += 1
         }
     }
     
     /// Append new pose data to list
-    @objc func recordPoseData(cameraFrame: ARFrame, timestamp: Double) {
-        poseData.append(getCameraCoordinates(cameraFrame: cameraFrame, timestamp: timestamp).split(separator: ","))
+    @objc func recordPoseData(cameraFrame: ARFrame, timestamp: Double, poseId: Int) {
+        poseData.append(getCameraCoordinates(cameraFrame: cameraFrame, timestamp: timestamp, poseId: poseId))
     }
     
     /// Append new april tag data to list
-    @objc func recordTags(cameraFrame: ARFrame, timestamp: Double) {
+    @objc func recordTags(cameraFrame: ARFrame, timestamp: Double, poseId: Int) {
         if isProcessingFrame {
             return
         }
         isProcessingFrame = true
-        let (image, timeStamp) = convertToUIImage(cameraFrame: cameraFrame, timestamp: timestamp)
-        let rotatedImage = imageRotatedByDegrees(oldImage: image, deg: 90)
+        let uiimage = convertToUIImage(cameraFrame: cameraFrame)
+        let rotatedImage = imageRotatedByDegrees(oldImage: uiimage, deg: 90)
         aprilTagQueue.async {
-            let arTags = self.getArTags(cameraFrame: cameraFrame, rotatedImage: rotatedImage, timeStamp: timeStamp)
+            let arTags = self.getArTags(cameraFrame: cameraFrame, rotatedImage: rotatedImage, timeStamp: timestamp, poseId: poseId)
             if !arTags.isEmpty {
-                self.tagData.append(arTags.split(separator: ","))
+                self.tagData.append(arTags)
             }
             self.isProcessingFrame = false
         }
@@ -158,33 +160,33 @@ class ViewController: UIViewController {
     }
     
     /// Convert ARFrame to a UIImage
-    func convertToUIImage(cameraFrame: ARFrame, timestamp: Double) -> (UIImage, Double) {
+    func convertToUIImage(cameraFrame: ARFrame) -> (UIImage) {
         let pixelBuffer = cameraFrame.capturedImage
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
         let context = CIContext(options: nil)
         let cgImage = context.createCGImage(ciImage, from: ciImage.extent)
         let uiImage = UIImage(cgImage: cgImage!)
-        return (uiImage, timestamp)
+        return uiImage
     }
     
     /// Get pose data (transformation matrix, time)
-    func getCameraCoordinates(cameraFrame: ARFrame, timestamp: Double) -> String {
+    func getCameraCoordinates(cameraFrame: ARFrame, timestamp: Double, poseId: Int) -> [Any] {
         let camera = cameraFrame.camera
         let cameraTransform = camera.transform
         let scene = SCNMatrix4(cameraTransform)
         
-        let fullMatrix = String(format: "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d", scene.m11, scene.m12, scene.m13, scene.m14, scene.m21, scene.m22, scene.m23, scene.m24, scene.m31, scene.m32, scene.m33, scene.m34, scene.m41, scene.m42, scene.m43, scene.m44, timestamp, poseData.count)
+        let fullMatrix: [Any] = [scene.m11, scene.m12, scene.m13, scene.m14, scene.m21, scene.m22, scene.m23, scene.m24, scene.m31, scene.m32, scene.m33, scene.m34, scene.m41, scene.m42, scene.m43, scene.m44, timestamp, poseId]
         
         return fullMatrix
     }
     
     /// Finds all april tags in the frame
-    func getArTags(cameraFrame: ARFrame, rotatedImage: UIImage, timeStamp: Double) -> String {
+    func getArTags(cameraFrame: ARFrame, rotatedImage: UIImage, timeStamp: Double, poseId: Int) -> [Any] {
         let intrinsics = cameraFrame.camera.intrinsics.columns
         f.findTags(rotatedImage, intrinsics.1.y, intrinsics.0.x, intrinsics.2.y, intrinsics.2.x)
         var tagArray: Array<AprilTags> = Array()
         let numTags = f.getNumberOfTags()
-        var poseMatrix = ""
+        var poseMatrix: [Any] = []
         if numTags > 0 {
             for i in 0...f.getNumberOfTags()-1 {
                 tagArray.append(f.getTagAt(i))
@@ -192,7 +194,7 @@ class ViewController: UIViewController {
 
             for i in 0...tagArray.count-1 {
                 let pose = tagArray[i].poseData
-                poseMatrix = poseMatrix + String(format: "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d", tagArray[i].number, pose.0, pose.1, pose.2, pose.3, pose.4, pose.5, pose.6, pose.7, pose.8, pose.9, pose.10, pose.11, pose.12, pose.13, pose.14, pose.15, timeStamp, tagData.count)
+                poseMatrix += [tagArray[i].number, pose.0, pose.1, pose.2, pose.3, pose.4, pose.5, pose.6, pose.7, pose.8, pose.9, pose.10, pose.11, pose.12, pose.13, pose.14, pose.15, timeStamp, poseId]
             }
         }
         return poseMatrix
