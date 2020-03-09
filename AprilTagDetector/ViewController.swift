@@ -17,21 +17,17 @@ class ViewController: UIViewController {
 
     @IBOutlet var sceneView: ARSCNView!
     
-    @IBOutlet var poseSwitch: UISwitch!
-    @IBOutlet var aprilTagSwitch: UISwitch!
-    
     var broadcastTags: UDPBroadcastConnection!
     var broadcastPoseConnection: UDPBroadcastConnection!
     var broadcastImagesConnection: UDPBroadcastConnection!
     
-    var poseTimer = Timer()
-    var tagFinderTimer = Timer()
+    var timer = Timer()
     
     var isProcessingFrame = false
     let f = imageToData()
     let aprilTagQueue = DispatchQueue(label: "edu.occamlab.apriltagfinder", qos: DispatchQoS.userInitiated)
-    var tagData:[String] = []
-    var poseData:[String] = []
+    var tagData:[[Substring]] = []
+    var poseData:[[Substring]] = []
     
     var firebaseRef: DatabaseReference!
     var firebaseStorage: Storage!
@@ -70,25 +66,12 @@ class ViewController: UIViewController {
             sender.setTitle("Stop", for: .normal)
             clearData()
             
-            if poseSwitch.isOn {
-                poseTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordPoseData), userInfo: nil, repeats: true)
-            }
-            if aprilTagSwitch.isOn {
-                tagFinderTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordTags), userInfo: nil, repeats: true)
-            }
-
-            poseSwitch.addTarget(self, action: #selector(scheduledTimerToRecordData), for: .valueChanged)
-            aprilTagSwitch.addTarget(self, action: #selector(scheduledTimerToRecordData), for: .valueChanged)
+            timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordData), userInfo: nil, repeats: true)
         }
         else {
             sender.setTitle("Start", for: .normal)
-            poseTimer.invalidate()
-            poseTimer = Timer()
-            poseSwitch.removeTarget(self, action: #selector(scheduledTimerToRecordData), for: .valueChanged)
-            
-            tagFinderTimer.invalidate()
-            tagFinderTimer = Timer()
-            aprilTagSwitch.removeTarget(self, action: #selector(scheduledTimerToRecordData), for: .valueChanged)
+            timer.invalidate()
+            timer = Timer()
             
             popUpSaveView()
         }
@@ -101,24 +84,6 @@ class ViewController: UIViewController {
         poseData = []
     }
     
-    /// Initialize timers to record data at regular intervals
-    @objc func scheduledTimerToRecordData() {
-        print("Checking to see what to transmit")
-        poseTimer.invalidate()
-        poseTimer = Timer()
-
-        if poseSwitch.isOn {
-            poseTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordPoseData), userInfo: nil, repeats: true)
-        }
-
-        tagFinderTimer.invalidate()
-        tagFinderTimer = Timer()
-
-        if aprilTagSwitch.isOn {
-            tagFinderTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordTags), userInfo: nil, repeats: true)
-        }
-    }
-    
     /// Pop up a view to let the user name their map.
     @objc func popUpSaveView() {
         // TODO: Create a real pop up view!
@@ -128,8 +93,9 @@ class ViewController: UIViewController {
     
     /// Upload pose data, last image frame to Firebase under "maps" and "unprocessed_maps" nodes
     func sendToFirebase(mapName: String) {
-        let (mapImage, timestamp) = getVideoFrames()
-        let mapId = String(timestamp).replacingOccurrences(of: ".", with: "") + mapName
+        let (cameraFrame, timestamp) = getCameraFrame()
+        let (mapImage, _) = convertToUIImage(cameraFrame: cameraFrame!, timestamp: timestamp!)
+        let mapId = String(timestamp!).replacingOccurrences(of: ".", with: "") + mapName
         let mapJsonFile: [String: Any] = ["map_id": mapId, "camera_intrinsics": getCameraIntrinsics(), "pose_data": poseData, "tag_data": tagData]
         
         let imagePath = "images/" + mapId + ".jpg"
@@ -152,58 +118,70 @@ class ViewController: UIViewController {
         firebaseRef.child("unprocessed_maps").child(mapId).setValue(filePath)
     }
     
+    @objc func recordData() {
+        let (cameraFrame, timestamp) = getCameraFrame()
+        if cameraFrame != nil {
+            recordPoseData(cameraFrame: cameraFrame!, timestamp: timestamp!)
+            recordTags(cameraFrame: cameraFrame!, timestamp: timestamp!)
+        }
+    }
+    
     /// Append new pose data to list
-    @objc func recordPoseData() {
-        poseData.append(getCameraCoordinates())
+    @objc func recordPoseData(cameraFrame: ARFrame, timestamp: Double) {
+        poseData.append(getCameraCoordinates(cameraFrame: cameraFrame, timestamp: timestamp).split(separator: ","))
     }
     
     /// Append new april tag data to list
-    @objc func recordTags() {
+    @objc func recordTags(cameraFrame: ARFrame, timestamp: Double) {
         if isProcessingFrame {
             return
         }
         isProcessingFrame = true
-        let (image, timeStamp) = getVideoFrames()
+        let (image, timeStamp) = convertToUIImage(cameraFrame: cameraFrame, timestamp: timestamp)
         let rotatedImage = imageRotatedByDegrees(oldImage: image, deg: 90)
         aprilTagQueue.async {
-            let arTags = self.getArTags(rotatedImage: rotatedImage, timeStamp: timeStamp)
+            let arTags = self.getArTags(cameraFrame: cameraFrame, rotatedImage: rotatedImage, timeStamp: timeStamp)
             if !arTags.isEmpty {
-                self.tagData.append(arTags)
+                self.tagData.append(arTags.split(separator: ","))
             }
             self.isProcessingFrame = false
         }
     }
     
-    /// Get video frames
-    func getVideoFrames() -> (UIImage, Double) {
+    /// Get the current camera frame
+    func getCameraFrame() -> (ARFrame?, Double?) {
         let cameraFrame = sceneView.session.currentFrame
-        let stampedTime = cameraFrame?.timestamp
-        
-        // Convert ARFrame to a UIImage
-        let pixelBuffer = cameraFrame?.capturedImage
-        let ciImage = CIImage(cvPixelBuffer: pixelBuffer!)
+        if cameraFrame == nil {
+            return (nil, nil)
+        }
+        return (cameraFrame, cameraFrame!.timestamp)
+    }
+    
+    /// Convert ARFrame to a UIImage
+    func convertToUIImage(cameraFrame: ARFrame, timestamp: Double) -> (UIImage, Double) {
+        let pixelBuffer = cameraFrame.capturedImage
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
         let context = CIContext(options: nil)
         let cgImage = context.createCGImage(ciImage, from: ciImage.extent)
         let uiImage = UIImage(cgImage: cgImage!)
-        return (uiImage, stampedTime!)
+        return (uiImage, timestamp)
     }
     
     /// Get pose data (transformation matrix, time)
-    func getCameraCoordinates() -> String {
-        let camera = sceneView.session.currentFrame?.camera
-        let cameraTransform = camera?.transform
-        let relativeTime = sceneView.session.currentFrame?.timestamp
-        let scene = SCNMatrix4(cameraTransform!)
+    func getCameraCoordinates(cameraFrame: ARFrame, timestamp: Double) -> String {
+        let camera = cameraFrame.camera
+        let cameraTransform = camera.transform
+        let scene = SCNMatrix4(cameraTransform)
         
-        let fullMatrix = String(format: "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", scene.m11, scene.m12, scene.m13, scene.m14, scene.m21, scene.m22, scene.m23, scene.m24, scene.m31, scene.m32, scene.m33, scene.m34, scene.m41, scene.m42, scene.m43, scene.m44, relativeTime!)
+        let fullMatrix = String(format: "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d", scene.m11, scene.m12, scene.m13, scene.m14, scene.m21, scene.m22, scene.m23, scene.m24, scene.m31, scene.m32, scene.m33, scene.m34, scene.m41, scene.m42, scene.m43, scene.m44, timestamp, poseData.count)
         
         return fullMatrix
     }
     
     /// Finds all april tags in the frame
-    func getArTags(rotatedImage: UIImage, timeStamp: Double) -> String {
-        let intrinsics = sceneView.session.currentFrame?.camera.intrinsics.columns
-        f.findTags(rotatedImage, intrinsics!.1.y, intrinsics!.0.x, intrinsics!.2.y, intrinsics!.2.x)
+    func getArTags(cameraFrame: ARFrame, rotatedImage: UIImage, timeStamp: Double) -> String {
+        let intrinsics = cameraFrame.camera.intrinsics.columns
+        f.findTags(rotatedImage, intrinsics.1.y, intrinsics.0.x, intrinsics.2.y, intrinsics.2.x)
         var tagArray: Array<AprilTags> = Array()
         let numTags = f.getNumberOfTags()
         var poseMatrix = ""
@@ -214,7 +192,7 @@ class ViewController: UIViewController {
 
             for i in 0...tagArray.count-1 {
                 let pose = tagArray[i].poseData
-                poseMatrix = poseMatrix + "," + String(format: "TAG,%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", tagArray[i].number, pose.0, pose.1, pose.2, pose.3, pose.4, pose.5, pose.6, pose.7, pose.8, pose.9, pose.10, pose.11, pose.12, pose.13, pose.14, pose.15, timeStamp)
+                poseMatrix = poseMatrix + String(format: "%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d", tagArray[i].number, pose.0, pose.1, pose.2, pose.3, pose.4, pose.5, pose.6, pose.7, pose.8, pose.9, pose.10, pose.11, pose.12, pose.13, pose.14, pose.15, timeStamp, tagData.count)
             }
         }
         return poseMatrix
