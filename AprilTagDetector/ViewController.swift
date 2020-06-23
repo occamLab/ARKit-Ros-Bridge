@@ -16,6 +16,8 @@ class ViewController: UIViewController {
     //MARK: Properties
 
     @IBOutlet var sceneView: ARSCNView!
+    @IBOutlet var moveToButton: UIButton!
+    @IBOutlet var explainLabel: UILabel!
     
     var broadcastTags: UDPBroadcastConnection!
     var broadcastPoseConnection: UDPBroadcastConnection!
@@ -33,6 +35,8 @@ class ViewController: UIViewController {
     var firebaseRef: DatabaseReference!
     var firebaseStorage: Storage!
     var firebaseStorageRef: StorageReference!
+    
+    var foundTag: Bool = false
     
     /// Begin an ARSession when the app first loads
     override func viewDidLoad() {
@@ -66,23 +70,39 @@ class ViewController: UIViewController {
         if sender.currentTitle == "Start" {
             sender.setTitle("Stop", for: .normal)
             clearData()
+            explainLabel.text = "Started recording!"
             
             timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordData), userInfo: nil, repeats: true)
         }
         else {
-            sender.setTitle("Start", for: .normal)
             timer.invalidate()
             timer = Timer()
-            
-            popUpSaveView()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
+                self.popUpSaveView()
+                self.clearData()
+                sender.setTitle("Start", for: .normal)
+            })
         }
 
+    }
+    /// Move to the save location screen
+    @IBAction func moveButtonTapped(_ sender: Any) {
+        if foundTag == true {
+            if let controller = self.storyboard?.instantiateViewController(withIdentifier: "SaveLocationController") {
+                self.navigationController?.pushViewController(controller, animated: true)
+            }
+        } else {
+            explainLabel.text = "You first have to find a tag"
+        }
     }
     
     /// Clear tag and pose data
     @objc func clearData() {
         tagData = []
         poseData = []
+        moveToButton.setTitleColor(.red, for: .normal)
+        explainLabel.text = "Waiting to press start"
+        foundTag = false
     }
     
     /// Pop up a view to let the user name their map.
@@ -99,7 +119,7 @@ class ViewController: UIViewController {
         let mapId = String(timestamp!).replacingOccurrences(of: ".", with: "") + mapName
         let mapJsonFile: [String: Any] = ["map_id": mapId, "camera_intrinsics": getCameraIntrinsics(), "pose_data": poseData, "tag_data": tagData]
         
-        let imagePath = "images/" + mapId + ".jpg"
+        let imagePath = "myTestFolder/" + mapId + ".jpg"
         let filePath = "raw_files/" + mapId + ".json"
         
         // TODO: handle errors when failing to upload image and json file
@@ -196,6 +216,14 @@ class ViewController: UIViewController {
                 let pose = tagArray[i].poseData
                 poseMatrix += [tagArray[i].number, pose.0, pose.1, pose.2, pose.3, pose.4, pose.5, pose.6, pose.7, pose.8, pose.9, pose.10, pose.11, pose.12, pose.13, pose.14, pose.15, timeStamp, poseId]
             }
+            DispatchQueue.main.async {
+                if self.foundTag == false {
+                    self.foundTag = true
+                    self.moveToButton.setTitleColor(.blue, for: .normal)
+                    self.explainLabel.text = "Tag Found! Now you can save location"
+                }
+            }
+            
         }
         return poseMatrix
     }
