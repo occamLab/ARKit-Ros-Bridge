@@ -37,6 +37,7 @@ class ViewController: UIViewController {
     var firebaseStorageRef: StorageReference!
     
     var foundTag: Bool = false
+    var checkNum: Int = 0
     
     /// Begin an ARSession when the app first loads
     override func viewDidLoad() {
@@ -77,7 +78,7 @@ class ViewController: UIViewController {
         else {
             timer.invalidate()
             timer = Timer()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
                 self.popUpSaveView()
                 self.clearData()
                 sender.setTitle("Start", for: .normal)
@@ -120,7 +121,7 @@ class ViewController: UIViewController {
         let mapJsonFile: [String: Any] = ["map_id": mapId, "camera_intrinsics": getCameraIntrinsics(), "pose_data": poseData, "tag_data": tagData]
         
         let imagePath = "myTestFolder/" + mapId + ".jpg"
-        let filePath = "raw_files/" + mapId + ".json"
+        let filePath = "myTestFolder/" + mapId + ".json"
         
         // TODO: handle errors when failing to upload image and json file
         // TODO: let the user pick their image
@@ -146,6 +147,8 @@ class ViewController: UIViewController {
             recordTags(cameraFrame: cameraFrame!, timestamp: timestamp!, poseId: poseId)
             poseId += 1
         }
+        //checkNum += 1
+        //print("recoding" + String(checkNum))
     }
     
     /// Append new pose data to list

@@ -48,9 +48,9 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0zS-CR-G7o">
-                                <rect key="frame" x="99.5" y="606" width="176" height="33"/>
+                                <rect key="frame" x="101" y="606" width="173" height="33"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <state key="normal" title="Move To Save Location">
+                                <state key="normal" title="Turn On Save Location">
                                     <color key="titleColor" red="1" green="0.13211544471149328" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
@@ -86,6 +86,7 @@
         <!--Save Location Controller-->
         <scene sceneID="0PG-Kf-Jjh">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NlK-ou-UbD" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="SaveLocationController" id="09k-0N-5gE" customClass="SaveLocationController" customModule="AprilTagDetector" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="RwB-DK-H8Z"/>
@@ -95,23 +96,62 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Not Updated Yet" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gdh-VN-5V3">
-                                <rect key="frame" x="84.5" y="316" width="206.5" height="35"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="29"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n2p-Sf-LRz">
+                                <rect key="frame" x="83" y="541.5" width="209" height="44"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                                <state key="normal" title="Enter Location Info"/>
+                                <connections>
+                                    <action selector="enterButton:" destination="09k-0N-5gE" eventType="touchUpInside" id="0Fl-jQ-r1k"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="agY-jh-mqA">
+                                <rect key="frame" x="166.5" y="73" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="znC-yk-QzW">
+                                <rect key="frame" x="166.5" y="103" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Location Info" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ulm-4w-ciA">
+                                <rect key="frame" x="125" y="198.5" width="125" height="20.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GVg-5U-guA">
+                                <rect key="frame" x="129" y="318.5" width="117" height="30"/>
+                                <state key="normal" title="Get Location Info"/>
+                                <connections>
+                                    <action selector="getLocationButton:" destination="09k-0N-5gE" eventType="touchUpInside" id="G8x-K3-G70"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="gdh-VN-5V3" firstAttribute="centerX" secondItem="Mrv-Xj-ZnL" secondAttribute="centerX" id="DUo-I7-TMf"/>
-                            <constraint firstItem="gdh-VN-5V3" firstAttribute="centerY" secondItem="Mrv-Xj-ZnL" secondAttribute="centerY" id="tyR-5Y-bPl"/>
+                            <constraint firstItem="Ulm-4w-ciA" firstAttribute="centerY" secondItem="Mrv-Xj-ZnL" secondAttribute="centerY" constant="-125" id="1vN-th-1zQ"/>
+                            <constraint firstItem="GVg-5U-guA" firstAttribute="centerX" secondItem="Mrv-Xj-ZnL" secondAttribute="centerX" id="4lz-fY-Ecf"/>
+                            <constraint firstItem="agY-jh-mqA" firstAttribute="centerY" secondItem="Mrv-Xj-ZnL" secondAttribute="centerY" constant="-250" id="ATB-Ge-aRv"/>
+                            <constraint firstItem="n2p-Sf-LRz" firstAttribute="centerX" secondItem="Mrv-Xj-ZnL" secondAttribute="centerX" id="SaW-Tw-eTd"/>
+                            <constraint firstItem="znC-yk-QzW" firstAttribute="centerY" secondItem="Mrv-Xj-ZnL" secondAttribute="centerY" constant="-220" id="f9c-NJ-4Hf"/>
+                            <constraint firstItem="GVg-5U-guA" firstAttribute="centerY" secondItem="Mrv-Xj-ZnL" secondAttribute="centerY" id="kBH-Ip-Kld"/>
+                            <constraint firstItem="znC-yk-QzW" firstAttribute="centerX" secondItem="Mrv-Xj-ZnL" secondAttribute="centerX" id="lmV-Z1-DQG"/>
+                            <constraint firstItem="Ulm-4w-ciA" firstAttribute="centerX" secondItem="Mrv-Xj-ZnL" secondAttribute="centerX" id="tch-yd-RCA"/>
+                            <constraint firstItem="agY-jh-mqA" firstAttribute="centerX" secondItem="Mrv-Xj-ZnL" secondAttribute="centerX" id="xyy-Vg-aqk"/>
+                            <constraint firstItem="n2p-Sf-LRz" firstAttribute="centerY" secondItem="Mrv-Xj-ZnL" secondAttribute="centerY" constant="230" id="zL6-4X-IXX"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="latitudeLabel" destination="znC-yk-QzW" id="CHG-82-8B4"/>
+                        <outlet property="locationAddress" destination="Ulm-4w-ciA" id="5bE-PM-jxi"/>
+                        <outlet property="longitudeLabel" destination="agY-jh-mqA" id="kEI-0q-H17"/>
+                    </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="NlK-ou-UbD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="699" y="95"/>
+            <point key="canvasLocation" x="698.39999999999998" y="94.902548725637189"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="C82-32-zfe">
