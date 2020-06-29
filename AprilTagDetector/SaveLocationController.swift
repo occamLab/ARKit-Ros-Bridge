@@ -9,14 +9,22 @@
 import UIKit
 import CoreLocation
 
-class SaveLocationController: UIViewController, CLLocationManagerDelegate {
+protocol writeValueBackDelegate: class {
+    func writeValueBack(value: String)
+}
+
+class SaveLocationController: UIViewController, CLLocationManagerDelegate, UITextFieldDelegate {
     
     var locationManager:CLLocationManager!
     @IBOutlet var longitudeLabel: UILabel!
     @IBOutlet var latitudeLabel: UILabel!
     @IBOutlet var locationAddress: UILabel!
+    @IBOutlet var userInput: UITextField!
+    
+    weak var delegate: writeValueBackDelegate?
     
     var autoLocationSet: Bool = false
+    var locationName: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,10 +34,13 @@ class SaveLocationController: UIViewController, CLLocationManagerDelegate {
         locationManager.requestWhenInUseAuthorization()
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
+        
+        userInput.delegate = self
     }
     
     @IBAction func enterButton(_ sender: Any) {
-        self.navigationController?.popViewController(animated: true)
+        self.delegate?.writeValueBack(value: "Successful!!!")
+        self.dismiss(animated: true, completion: nil)
     }
     @IBAction func getLocationButton(_ sender: Any) {
         getAddress()
@@ -47,6 +58,15 @@ class SaveLocationController: UIViewController, CLLocationManagerDelegate {
             longitudeLabel.sizeToFit()
             latitudeLabel.sizeToFit()
         }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if let input = userInput.text {
+            locationName = input
+            //print(locationName)
+        }
+        userInput.resignFirstResponder()
+        return true
     }
     
     func getAddress() {

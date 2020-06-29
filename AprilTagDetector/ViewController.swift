@@ -11,8 +11,7 @@ import ARKit
 import FirebaseDatabase
 import FirebaseStorage
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController, writeValueBackDelegate {
     //MARK: Properties
 
     @IBOutlet var sceneView: ARSCNView!
@@ -89,13 +88,21 @@ class ViewController: UIViewController {
     /// Move to the save location screen
     @IBAction func moveButtonTapped(_ sender: Any) {
         if foundTag == true {
-            if let controller = self.storyboard?.instantiateViewController(withIdentifier: "SaveLocationController") {
-                self.navigationController?.pushViewController(controller, animated: true)
-            }
+            self.performSegue(withIdentifier: "Show", sender: self)
         } else {
             explainLabel.text = "You first have to find a tag"
         }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let saveLocationController = segue.destination as! SaveLocationController
+        saveLocationController.delegate = self
+    }
+    
+    func writeValueBack(value: String) {
+        explainLabel.text = value
+    }
+    
     
     /// Clear tag and pose data
     @objc func clearData() {
