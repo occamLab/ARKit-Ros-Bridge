@@ -15,7 +15,9 @@ class ViewController: UIViewController, writeValueBackDelegate {
     //MARK: Properties
 
     @IBOutlet var sceneView: ARSCNView!
+    // button to move to the other view
     @IBOutlet var moveToButton: UIButton!
+    // label to print needed messages
     @IBOutlet var explainLabel: UILabel!
     
     var broadcastTags: UDPBroadcastConnection!
@@ -35,8 +37,8 @@ class ViewController: UIViewController, writeValueBackDelegate {
     var firebaseStorage: Storage!
     var firebaseStorageRef: StorageReference!
     
+    //boolean to check whether the camera found tag or not
     var foundTag: Bool = false
-    var checkNum: Int = 0
     
     /// Begin an ARSession when the app first loads
     override func viewDidLoad() {
@@ -66,6 +68,7 @@ class ViewController: UIViewController, writeValueBackDelegate {
     }
     
     /// Send selected types of data to ROS when button is pressed
+    //
     @IBAction func startButtonTapped(_ sender: UIButton) {
         if sender.currentTitle == "Start" {
             sender.setTitle("Stop", for: .normal)
@@ -77,6 +80,7 @@ class ViewController: UIViewController, writeValueBackDelegate {
         else {
             timer.invalidate()
             timer = Timer()
+            // delay to avoid pressing the button again before timer ends
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
                 self.popUpSaveView()
                 self.clearData()
@@ -94,13 +98,16 @@ class ViewController: UIViewController, writeValueBackDelegate {
         }
     }
     
+    // when moving to the other view, prepare delegate to get the data back
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let saveLocationController = segue.destination as! SaveLocationController
         saveLocationController.delegate = self
     }
     
-    func writeValueBack(value: String) {
-        explainLabel.text = value
+    // function called when dismissing the save location view
+    func writeValueBack(value: [String:Any]) {
+        let tempString = value["LocationName"] as! String
+        explainLabel.text = tempString
     }
     
     
@@ -147,6 +154,7 @@ class ViewController: UIViewController, writeValueBackDelegate {
         firebaseRef.child("unprocessed_maps").child(mapId).setValue(filePath)
     }
     
+    // record data
     @objc func recordData() {
         let (cameraFrame, timestamp) = getCameraFrame()
         if cameraFrame != nil {
@@ -154,8 +162,6 @@ class ViewController: UIViewController, writeValueBackDelegate {
             recordTags(cameraFrame: cameraFrame!, timestamp: timestamp!, poseId: poseId)
             poseId += 1
         }
-        //checkNum += 1
-        //print("recoding" + String(checkNum))
     }
     
     /// Append new pose data to list
