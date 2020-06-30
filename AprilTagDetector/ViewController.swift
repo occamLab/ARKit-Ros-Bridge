@@ -39,6 +39,10 @@ class ViewController: UIViewController, writeValueBackDelegate {
     
     //boolean to check whether the camera found tag or not
     var foundTag: Bool = false
+    var isMovingBox: Bool = false
+    
+    var currentBoxNode: SCNNode = SCNNode()
+    var currentTextNode: SCNNode = SCNNode()
     
     /// Begin an ARSession when the app first loads
     override func viewDidLoad() {
@@ -58,6 +62,7 @@ class ViewController: UIViewController, writeValueBackDelegate {
     func startSession() {
         let configuration = ARWorldTrackingConfiguration()
         sceneView.session.run(configuration)
+        //sceneView.debugOptions = ARSCNDebugOptions.showWorldOrigin
     }
     
     /// Initialize firebase reference
@@ -108,8 +113,58 @@ class ViewController: UIViewController, writeValueBackDelegate {
     func writeValueBack(value: [String:Any]) {
         let tempString = value["LocationName"] as! String
         explainLabel.text = tempString
+        addBox(locationName: tempString)
     }
     
+    func addBox(locationName: String) {
+        let box = SCNBox(width: 0.05, height: 0.2, length: 0.05, chamferRadius: 0)
+        
+        let text = SCNText(string: locationName, extrusionDepth: 0)
+        
+        let cameraNode = sceneView.pointOfView
+        let boxNode = SCNNode()
+        let textNode = SCNNode()
+        boxNode.geometry = box
+        textNode.geometry = text
+        let boxPosition = SCNVector3(0,0,-0.6)
+        let textPosition = SCNVector3(0,0.1,0)
+        
+        updatePositionAndOrientationOf(boxNode, withPosition: boxPosition, relativeTo: cameraNode!)
+        updatePositionAndOrientationOf(textNode, withPosition: textPosition, relativeTo: boxNode)
+        
+        textNode.scale = SCNVector3(0.005,0.005,0.005)
+        
+        sceneView.scene.rootNode.addChildNode(boxNode)
+        sceneView.scene.rootNode.addChildNode(textNode)
+        
+        currentBoxNode = boxNode
+        currentTextNode = textNode
+        
+        isMovingBox = true
+    }
+    
+    func updatePositionAndOrientationOf(_ node: SCNNode, withPosition position: SCNVector3, relativeTo referenceNode: SCNNode) {
+        let referenceNodeTransform = matrix_float4x4(referenceNode.transform)
+        
+        var translationMatrix = matrix_identity_float4x4
+        translationMatrix.columns.3.x = position.x
+        translationMatrix.columns.3.y = position.y
+        translationMatrix.columns.3.z = position.z
+        
+        let updatedTransform = matrix_multiply(referenceNodeTransform, translationMatrix)
+        node.transform = SCNMatrix4(updatedTransform)
+    }
+    
+    func updateCurrentBoxPosition() {
+        let boxPosition = SCNVector3(0,0,-0.6)
+        let textPosition = SCNVector3(0,0.1,0)
+        let cameraNode = sceneView.pointOfView
+        
+        updatePositionAndOrientationOf(currentBoxNode, withPosition: boxPosition, relativeTo: cameraNode!)
+        updatePositionAndOrientationOf(currentTextNode, withPosition: textPosition, relativeTo: currentBoxNode)
+        
+        currentTextNode.scale = SCNVector3(0.005,0.005,0.005)
+    }
     
     /// Clear tag and pose data
     @objc func clearData() {
@@ -118,6 +173,9 @@ class ViewController: UIViewController, writeValueBackDelegate {
         moveToButton.setTitleColor(.red, for: .normal)
         explainLabel.text = "Waiting to press start"
         foundTag = false
+        isMovingBox = false
+        currentTextNode = SCNNode()
+        currentBoxNode = SCNNode()
     }
     
     /// Pop up a view to let the user name their map.
@@ -161,6 +219,11 @@ class ViewController: UIViewController, writeValueBackDelegate {
             recordPoseData(cameraFrame: cameraFrame!, timestamp: timestamp!, poseId: poseId)
             recordTags(cameraFrame: cameraFrame!, timestamp: timestamp!, poseId: poseId)
             poseId += 1
+            
+            if isMovingBox == true {
+                updateCurrentBoxPosition()
+            }
+            
         }
     }
     
