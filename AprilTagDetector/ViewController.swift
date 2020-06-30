@@ -41,6 +41,7 @@ class ViewController: UIViewController, writeValueBackDelegate {
     var foundTag: Bool = false
     var isMovingBox: Bool = false
     
+    // will save current box object in control
     var currentBoxNode: SCNNode = SCNNode()
     var currentTextNode: SCNNode = SCNNode()
     
@@ -116,6 +117,8 @@ class ViewController: UIViewController, writeValueBackDelegate {
         addBox(locationName: tempString)
     }
     
+    // add a box to the scene with the location name.
+    // created 0.6m in front of the current camera view
     func addBox(locationName: String) {
         let box = SCNBox(width: 0.05, height: 0.2, length: 0.05, chamferRadius: 0)
         
@@ -143,6 +146,7 @@ class ViewController: UIViewController, writeValueBackDelegate {
         isMovingBox = true
     }
     
+    // move node position relative to another node's position.
     func updatePositionAndOrientationOf(_ node: SCNNode, withPosition position: SCNVector3, relativeTo referenceNode: SCNNode) {
         let referenceNodeTransform = matrix_float4x4(referenceNode.transform)
         
@@ -155,6 +159,7 @@ class ViewController: UIViewController, writeValueBackDelegate {
         node.transform = SCNMatrix4(updatedTransform)
     }
     
+    // update the location of the box so that it's always in front of the user's camera
     func updateCurrentBoxPosition() {
         let boxPosition = SCNVector3(0,0,-0.6)
         let textPosition = SCNVector3(0,0.1,0)
