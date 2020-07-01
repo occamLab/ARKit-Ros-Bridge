@@ -56,7 +56,7 @@ class ViewController: UIViewController {
     
     /// Initialize firebase reference
     func initFirebase() {
-        firebaseRef = Database.database().reference()
+        firebaseRef = Database.database(url: "https://invisible-map-sandbox.firebaseio.com/").reference()
         firebaseStorage = Storage.storage()
         firebaseStorageRef = firebaseStorage.reference()
     }

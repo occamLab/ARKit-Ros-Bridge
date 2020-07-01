@@ -30,7 +30,7 @@
 		0E577BDCFA79F972F60E2FC7 /* Pods_AprilTagDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AprilTagDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23C214AE23808AB1007B2DA5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4AADFF49867879DA2A46D359 /* Pods-AprilTagDetector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AprilTagDetector.debug.xcconfig"; path = "Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector.debug.xcconfig"; sourceTree = "<group>"; };
-		4BC3FE231F876BE9006A29FB /* AprilTagDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AprilTagDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4BC3FE231F876BE9006A29FB /* Invisible Map Creator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Invisible Map Creator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC3FE271F876BE9006A29FB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		4BC3FE301F876BE9006A29FB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4BC3FE321F876BE9006A29FB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -90,7 +90,7 @@
 		4BC3FE241F876BE9006A29FB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4BC3FE231F876BE9006A29FB /* AprilTagDetector.app */,
+				4BC3FE231F876BE9006A29FB /* Invisible Map Creator.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -155,7 +155,7 @@
 			);
 			name = AprilTagDetector;
 			productName = StartedAprilTag;
-			productReference = 4BC3FE231F876BE9006A29FB /* AprilTagDetector.app */;
+			productReference = 4BC3FE231F876BE9006A29FB /* Invisible Map Creator.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -427,8 +427,8 @@
 				INFOPLIST_FILE = "$(SRCROOT)/AprilTagDetector/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.InvisibleMap;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.occamlab.invisiblemapdatacollector;
+				PRODUCT_NAME = "Invisible Map Creator";
 				SWIFT_OBJC_BRIDGING_HEADER = "./AprilTagDetector/TagFinder-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
@@ -455,8 +455,8 @@
 				INFOPLIST_FILE = "$(SRCROOT)/AprilTagDetector/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.InvisibleMap;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = edu.occamlab.invisiblemapdatacollector;
+				PRODUCT_NAME = "Invisible Map Creator";
 				SWIFT_OBJC_BRIDGING_HEADER = "./AprilTagDetector/TagFinder-Swift.h";
 				SWIFT_VERSION = 4.0;
 			};
