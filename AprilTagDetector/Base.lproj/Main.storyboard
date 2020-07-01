@@ -20,45 +20,41 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yim-aW-dZL">
-                                <rect key="frame" x="16" y="200" width="343" height="307"/>
+                                <rect key="frame" x="16" y="7" width="380" height="500"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="4yU-iX-fdE"/>
-                                    <constraint firstAttribute="width" secondItem="Yim-aW-dZL" secondAttribute="height" multiplier="343:307" id="LEZ-du-RS8"/>
+                                    <constraint firstAttribute="width" constant="380" id="2fg-t6-l7t"/>
+                                    <constraint firstAttribute="height" constant="500" id="4yU-iX-fdE"/>
                                 </constraints>
                             </arscnView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="Dg2-sg-mPK">
-                                <rect key="frame" x="16" y="50" width="343" height="41"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello, and Welcome to the April Tag Detector!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3ZM-4p-dPO">
-                                        <rect key="frame" x="49.5" y="0.0" width="244.5" height="41"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                            </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pG8-4h-oOJ">
-                                <rect key="frame" x="152.5" y="537" width="70" height="49"/>
+                                <rect key="frame" x="74" y="537" width="70" height="49"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="31"/>
                                 <state key="normal" title="Start"/>
                                 <connections>
                                     <action selector="startButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="C1o-Gq-mTp"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Foj-a4-Plx">
+                                <rect key="frame" x="172" y="537" width="170" height="49"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="31"/>
+                                <state key="normal" title="Capture Tag"/>
+                                <connections>
+                                    <action selector="captureTagTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="igj-se-NDE"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Yim-aW-dZL" secondAttribute="bottom" constant="160" id="42W-cl-0sn"/>
-                            <constraint firstItem="Dg2-sg-mPK" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="50" id="C1g-8d-H8u"/>
                             <constraint firstItem="Yim-aW-dZL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="OUo-QF-iX0"/>
-                            <constraint firstItem="pG8-4h-oOJ" firstAttribute="centerX" secondItem="Yim-aW-dZL" secondAttribute="centerX" id="P2Z-U2-Bfp"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Yim-aW-dZL" secondAttribute="trailing" id="VDt-tB-9O9"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="Dg2-sg-mPK" secondAttribute="trailing" id="WCv-UI-0GQ"/>
+                            <constraint firstItem="pG8-4h-oOJ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="58" id="V2l-Wc-RVD"/>
                             <constraint firstItem="pG8-4h-oOJ" firstAttribute="top" secondItem="Yim-aW-dZL" secondAttribute="bottom" constant="30" id="b0O-WA-LRA"/>
-                            <constraint firstItem="Dg2-sg-mPK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="k7K-c2-va0"/>
+                            <constraint firstItem="Foj-a4-Plx" firstAttribute="centerY" secondItem="pG8-4h-oOJ" secondAttribute="centerY" id="qNk-TD-Vgw"/>
+                            <constraint firstItem="Foj-a4-Plx" firstAttribute="leading" secondItem="pG8-4h-oOJ" secondAttribute="trailing" constant="28" id="tWJ-jr-UhM"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="captureTagButton" destination="Foj-a4-Plx" id="suf-dH-zGc"/>
                         <outlet property="sceneView" destination="Yim-aW-dZL" id="YDa-tr-oJZ"/>
                     </connections>
                 </viewController>

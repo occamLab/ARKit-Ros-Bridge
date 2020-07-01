@@ -16,6 +16,7 @@ class ViewController: UIViewController {
     //MARK: Properties
 
     @IBOutlet var sceneView: ARSCNView!
+    @IBOutlet weak var captureTagButton: UIButton!
     
     var broadcastTags: UDPBroadcastConnection!
     var broadcastPoseConnection: UDPBroadcastConnection!
@@ -29,6 +30,12 @@ class ViewController: UIViewController {
     var tagData:[[Any]] = []
     var poseData:[[Any]] = []
     var poseId: Int = 0
+    /// Controls whether or not an April tag can be captured.  This can be gated by the "Capture Tag" button if you only want to get data when the user feels that they have a relatively stable position
+    var tagRequested = false
+    var continuousCaptureEnabled = false
+    var canCaptureTag : Bool {
+        return tagRequested || continuousCaptureEnabled
+    }
     
     var firebaseRef: DatabaseReference!
     var firebaseStorage: Storage!
@@ -41,6 +48,10 @@ class ViewController: UIViewController {
         initFirebase()
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
+        if continuousCaptureEnabled {
+            captureTagButton.isHidden = true
+        }
+        captureTagButton.isEnabled = false
     }
     
     /// Resign keyboard when screen is tapped
@@ -61,19 +72,25 @@ class ViewController: UIViewController {
         firebaseStorageRef = firebaseStorage.reference()
     }
     
+    @IBAction func captureTagTapped(_ sender: UIButton) {
+        tagRequested = true
+    }
+
     /// Send selected types of data to ROS when button is pressed
     @IBAction func startButtonTapped(_ sender: UIButton) {
         if sender.currentTitle == "Start" {
             sender.setTitle("Stop", for: .normal)
             clearData()
+            captureTagButton.isEnabled = true
             
-            timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.recordData), userInfo: nil, repeats: true)
+            timer = Timer.scheduledTimer(timeInterval: 0.3, target: self, selector: #selector(self.recordData), userInfo: nil, repeats: true)
         }
         else {
             sender.setTitle("Start", for: .normal)
             timer.invalidate()
             timer = Timer()
-            
+            captureTagButton.isEnabled = false
+
             popUpSaveView()
         }
 
@@ -109,14 +126,14 @@ class ViewController: UIViewController {
 
         // Upload raw file json
         if let jsonData = try? JSONSerialization.data(withJSONObject: mapJsonFile, options: []) {
-            firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"]))
-        }
+            firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"])) { (metadata, error) in
+                // Write to maps node in database
+                self.firebaseRef.child("maps").child(mapId).setValue(["name": mapName, "image": imagePath, "raw_file": filePath])
 
-        // Write to maps node in database
-        firebaseRef.child("maps").child(mapId).setValue(["name": mapName, "image": imagePath, "raw_file": filePath])
-        
-        // Write to unprocessed maps node in database
-        firebaseRef.child("unprocessed_maps").child(mapId).setValue(filePath)
+                // Write to unprocessed maps node in database
+                self.firebaseRef.child("unprocessed_maps").child(mapId).setValue(filePath)
+            }
+        }
     }
     
     @objc func recordData() {
@@ -135,10 +152,11 @@ class ViewController: UIViewController {
     
     /// Append new april tag data to list
     @objc func recordTags(cameraFrame: ARFrame, timestamp: Double, poseId: Int) {
-        if isProcessingFrame {
+        if isProcessingFrame || !canCaptureTag {
             return
         }
         isProcessingFrame = true
+        captureTagButton.isEnabled = false
         let uiimage = convertToUIImage(cameraFrame: cameraFrame)
         let rotatedImage = imageRotatedByDegrees(oldImage: uiimage, deg: 90)
         aprilTagQueue.async {
@@ -147,6 +165,10 @@ class ViewController: UIViewController {
                 self.tagData.append(arTags)
             }
             self.isProcessingFrame = false
+            self.tagRequested = false
+            DispatchQueue.main.async {
+                self.captureTagButton.isEnabled = true
+            }
         }
     }
     
@@ -188,6 +210,8 @@ class ViewController: UIViewController {
         let numTags = f.getNumberOfTags()
         var poseMatrix: [Any] = []
         if numTags > 0 {
+            let generator = UIImpactFeedbackGenerator(style: .heavy)
+            generator.impactOccurred()
             for i in 0...f.getNumberOfTags()-1 {
                 tagArray.append(f.getTagAt(i))
             }
