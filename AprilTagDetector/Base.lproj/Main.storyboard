@@ -22,14 +22,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <arscnView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yim-aW-dZL">
-                                <rect key="frame" x="16" y="200" width="343" height="307"/>
+                                <rect key="frame" x="16" y="110" width="343" height="307"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="4yU-iX-fdE"/>
                                     <constraint firstAttribute="width" secondItem="Yim-aW-dZL" secondAttribute="height" multiplier="343:307" id="LEZ-du-RS8"/>
                                 </constraints>
                             </arscnView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="Dg2-sg-mPK">
-                                <rect key="frame" x="16" y="70" width="343" height="41"/>
+                                <rect key="frame" x="16" y="50" width="343" height="41"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello, and Welcome to the April Tag Detector!" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3ZM-4p-dPO">
                                         <rect key="frame" x="49.5" y="0.0" width="244.5" height="41"/>
@@ -39,29 +39,37 @@
                                     </label>
                                 </subviews>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pG8-4h-oOJ">
-                                <rect key="frame" x="153" y="537" width="69" height="49"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="31"/>
-                                <state key="normal" title="Start"/>
-                                <connections>
-                                    <action selector="startButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="C1o-Gq-mTp"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0zS-CR-G7o">
-                                <rect key="frame" x="101" y="606" width="173" height="33"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <state key="normal" title="Turn On Save Location">
+                                <rect key="frame" x="128" y="516" width="119" height="35"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                <state key="normal" title="Save Location">
                                     <color key="titleColor" red="1" green="0.13211544471149328" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
                                 <connections>
                                     <action selector="moveButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="c1W-8s-7Q6"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lPg-Cp-1GN">
+                                <rect key="frame" x="106" y="581" width="163" height="33"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <state key="normal" title="Manage Location List"/>
+                                <connections>
+                                    <action selector="manageButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aXJ-NF-mwv"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pG8-4h-oOJ">
+                                <rect key="frame" x="78" y="447" width="219" height="49"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="31"/>
+                                <state key="normal" title="Start Recording"/>
+                                <connections>
+                                    <action selector="startButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="C1o-Gq-mTp"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Yim-aW-dZL" secondAttribute="bottom" constant="160" id="42W-cl-0sn"/>
-                            <constraint firstItem="Dg2-sg-mPK" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="50" id="C1g-8d-H8u"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Yim-aW-dZL" secondAttribute="bottom" constant="250" id="42W-cl-0sn"/>
+                            <constraint firstItem="Dg2-sg-mPK" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="C1g-8d-H8u"/>
                             <constraint firstItem="Yim-aW-dZL" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="OUo-QF-iX0"/>
                             <constraint firstItem="pG8-4h-oOJ" firstAttribute="centerX" secondItem="Yim-aW-dZL" secondAttribute="centerX" id="P2Z-U2-Bfp"/>
                             <constraint firstItem="0zS-CR-G7o" firstAttribute="top" secondItem="pG8-4h-oOJ" secondAttribute="bottom" constant="20" id="QQC-HD-bAk"/>
@@ -70,6 +78,8 @@
                             <constraint firstItem="pG8-4h-oOJ" firstAttribute="top" secondItem="Yim-aW-dZL" secondAttribute="bottom" constant="30" id="b0O-WA-LRA"/>
                             <constraint firstItem="Dg2-sg-mPK" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="k7K-c2-va0"/>
                             <constraint firstItem="0zS-CR-G7o" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ndf-il-H5P"/>
+                            <constraint firstItem="lPg-Cp-1GN" firstAttribute="top" secondItem="0zS-CR-G7o" secondAttribute="bottom" constant="30" id="pyO-qP-kMD"/>
+                            <constraint firstItem="lPg-Cp-1GN" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="tse-mf-34Y"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="3T2-xZ-qAk"/>
@@ -77,12 +87,44 @@
                         <outlet property="explainLabel" destination="3ZM-4p-dPO" id="SJb-9T-2ln"/>
                         <outlet property="moveToButton" destination="0zS-CR-G7o" id="6zc-CZ-I07"/>
                         <outlet property="sceneView" destination="Yim-aW-dZL" id="oB5-JH-4KD"/>
-                        <segue destination="09k-0N-5gE" kind="show" identifier="Show" id="w7I-Sn-6hE"/>
+                        <segue destination="09k-0N-5gE" kind="show" identifier="SetLocation" id="w7I-Sn-6hE"/>
+                        <segue destination="McQ-v0-Gm2" kind="show" identifier="LocationInfo" id="19z-Rh-Fso"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="32.799999999999997" y="98.50074962518741"/>
+            <point key="canvasLocation" x="63" y="115"/>
+        </scene>
+        <!--Manage Location Controller-->
+        <scene sceneID="nqy-PK-K3q">
+            <objects>
+                <tableViewController id="McQ-v0-Gm2" customClass="ManageLocationController" customModule="AprilTagDetector" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="WXf-mn-Eue">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="2kU-Ys-ZIf">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="2kU-Ys-ZIf" id="DAb-sR-JC5">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="McQ-v0-Gm2" id="W4h-Wh-cpT"/>
+                            <outlet property="delegate" destination="McQ-v0-Gm2" id="YgP-kz-VPC"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <outlet property="locationTable" destination="WXf-mn-Eue" id="lTS-XC-hK3"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="djF-i6-bna" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="758" y="627"/>
         </scene>
         <!--Save Location Controller-->
         <scene sceneID="0PG-Kf-Jjh">
@@ -162,7 +204,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NlK-ou-UbD" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="734" y="99"/>
+            <point key="canvasLocation" x="854" y="-70"/>
         </scene>
     </scenes>
 </document>

@@ -76,8 +76,8 @@ class ViewController: UIViewController, writeValueBackDelegate {
     /// Send selected types of data to ROS when button is pressed
     //
     @IBAction func startButtonTapped(_ sender: UIButton) {
-        if sender.currentTitle == "Start" {
-            sender.setTitle("Stop", for: .normal)
+        if sender.currentTitle == "Start Recording" {
+            sender.setTitle("Stop Recording", for: .normal)
             clearData()
             explainLabel.text = "Started recording!"
             
@@ -90,24 +90,39 @@ class ViewController: UIViewController, writeValueBackDelegate {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
                 self.popUpSaveView()
                 self.clearData()
-                sender.setTitle("Start", for: .normal)
+                sender.setTitle("Start Recording", for: .normal)
             })
         }
 
     }
     /// Move to the save location screen
-    @IBAction func moveButtonTapped(_ sender: Any) {
+    @IBAction func moveButtonTapped(_ sender: UIButton) {
         if foundTag == true {
-            self.performSegue(withIdentifier: "Show", sender: self)
+            if sender.currentTitle == "Save Location" {
+                sender.setTitle("Set Location", for: .normal)
+                self.performSegue(withIdentifier: "SetLocation", sender: self)
+            } else if isMovingBox == true {
+                isMovingBox = false
+                currentTextNode = SCNNode()
+                currentBoxNode = SCNNode()
+                sender.setTitle("Save Location", for: .normal)
+            }
         } else {
             explainLabel.text = "You first have to find a tag"
         }
     }
     
+    
+    @IBAction func manageButtonTapped(_ sender: Any) {
+        self.performSegue(withIdentifier: "LocationInfo", sender: self)
+    }
+    
     // when moving to the other view, prepare delegate to get the data back
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let saveLocationController = segue.destination as! SaveLocationController
-        saveLocationController.delegate = self
+        if segue.identifier == "SetLocation" {
+            let saveLocationController = segue.destination as! SaveLocationController
+            saveLocationController.delegate = self
+        }
     }
     
     // function called when dismissing the save location view
@@ -178,9 +193,6 @@ class ViewController: UIViewController, writeValueBackDelegate {
         moveToButton.setTitleColor(.red, for: .normal)
         explainLabel.text = "Waiting to press start"
         foundTag = false
-        isMovingBox = false
-        currentTextNode = SCNNode()
-        currentBoxNode = SCNNode()
     }
     
     /// Pop up a view to let the user name their map.

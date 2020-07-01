@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0CA958E824A0A6A800ACAD2A /* SaveLocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA958E724A0A6A800ACAD2A /* SaveLocationController.swift */; };
+		0CEEA73924AC766900709783 /* ManageLocationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEEA73824AC766900709783 /* ManageLocationController.swift */; };
 		23C214AF23808AB1007B2DA5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 23C214AE23808AB1007B2DA5 /* GoogleService-Info.plist */; };
 		4BC3FE281F876BE9006A29FB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BC3FE271F876BE9006A29FB /* main.m */; };
 		4BC3FE311F876BE9006A29FB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BC3FE2F1F876BE9006A29FB /* Main.storyboard */; };
@@ -29,6 +30,7 @@
 /* Begin PBXFileReference section */
 		0BBDE9D76809B8A9A3E77FEE /* Pods-AprilTagDetector.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AprilTagDetector.release.xcconfig"; path = "Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector.release.xcconfig"; sourceTree = "<group>"; };
 		0CA958E724A0A6A800ACAD2A /* SaveLocationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveLocationController.swift; sourceTree = "<group>"; };
+		0CEEA73824AC766900709783 /* ManageLocationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageLocationController.swift; sourceTree = "<group>"; };
 		0E577BDCFA79F972F60E2FC7 /* Pods_AprilTagDetector.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AprilTagDetector.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		23C214AE23808AB1007B2DA5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4AADFF49867879DA2A46D359 /* Pods-AprilTagDetector.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AprilTagDetector.debug.xcconfig"; path = "Target Support Files/Pods-AprilTagDetector/Pods-AprilTagDetector.debug.xcconfig"; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				8615A85621027EE1001D75B4 /* UDPBroadcastConnection.swift */,
 				8615A85821027F16001D75B4 /* Config.swift */,
 				AD95827D20F682680099DA98 /* TagFinder.h */,
+				0CEEA73824AC766900709783 /* ManageLocationController.swift */,
 				AD95827220F6463F009F2BC9 /* TagFinder-Swift.h */,
 				4BC3FE2F1F876BE9006A29FB /* Main.storyboard */,
 				4BC3FE321F876BE9006A29FB /* Assets.xcassets */,
@@ -275,6 +278,7 @@
 				8615A85921027F16001D75B4 /* Config.swift in Sources */,
 				AD95827F20F683E90099DA98 /* ViewController.swift in Sources */,
 				4BC3FE421F876C27006A29FB /* ImageDisplay.mm in Sources */,
+				0CEEA73924AC766900709783 /* ManageLocationController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
