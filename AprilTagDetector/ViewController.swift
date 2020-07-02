@@ -144,6 +144,15 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     
     func writeNodeBack(nodes: [SCNNode], deleteNodes: [SCNNode]) {
         nodeList = nodes
+        for x in deleteNodes {
+            let name = x.name!
+            if let childNode = sceneView.scene.rootNode.childNode(withName: name, recursively: false) {
+                childNode.removeFromParentNode()
+            }
+            if let childNodeText = sceneView.scene.rootNode.childNode(withName: name + "Text", recursively: false) {
+                childNodeText.removeFromParentNode()
+            }
+        }
     }
     
     // add a box to the scene with the location name.
@@ -159,6 +168,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         boxNode.geometry = box
         boxNode.name = locationName
         textNode.geometry = text
+        textNode.name = locationName + "Text"
         let boxPosition = SCNVector3(0,0,-0.6)
         let textPosition = SCNVector3(0,0.1,0)
         
