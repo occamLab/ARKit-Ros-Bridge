@@ -46,9 +46,11 @@ class SaveLocationController: UIViewController, CLLocationManagerDelegate, UITex
         var dataDic: [String:Any] = [:]
         dataDic["LocationName"] = locationName
         dataDic["locationAddress"] = locationAddress.text
+        dataDic["isComplete"] = true
         
         self.delegate?.writeValueBack(value: dataDic)
-        self.dismiss(animated: true, completion: nil)
+        //self.dismiss(animated: true, completion: nil)
+        self.navigationController?.popViewController(animated: true)
     }
     
     // calles getAddress function when pressed

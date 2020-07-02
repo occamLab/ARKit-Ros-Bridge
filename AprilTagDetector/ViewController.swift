@@ -11,7 +11,8 @@ import ARKit
 import FirebaseDatabase
 import FirebaseStorage
 
-class ViewController: UIViewController, writeValueBackDelegate {
+class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDelegate {
+    
     //MARK: Properties
 
     @IBOutlet var sceneView: ARSCNView!
@@ -44,6 +45,8 @@ class ViewController: UIViewController, writeValueBackDelegate {
     // will save current box object in control
     var currentBoxNode: SCNNode = SCNNode()
     var currentTextNode: SCNNode = SCNNode()
+    
+    var nodeList: [SCNNode] = []
     
     /// Begin an ARSession when the app first loads
     override func viewDidLoad() {
@@ -103,6 +106,7 @@ class ViewController: UIViewController, writeValueBackDelegate {
                 self.performSegue(withIdentifier: "SetLocation", sender: self)
             } else if isMovingBox == true {
                 isMovingBox = false
+                nodeList.append(currentBoxNode)
                 currentTextNode = SCNNode()
                 currentBoxNode = SCNNode()
                 sender.setTitle("Save Location", for: .normal)
@@ -122,14 +126,24 @@ class ViewController: UIViewController, writeValueBackDelegate {
         if segue.identifier == "SetLocation" {
             let saveLocationController = segue.destination as! SaveLocationController
             saveLocationController.delegate = self
+        } else if segue.identifier == "LocationInfo" {
+            let manageLocationController = segue.destination as! ManageLocationController
+            manageLocationController.nodeList = nodeList
+            manageLocationController.delegate = self
         }
     }
     
     // function called when dismissing the save location view
     func writeValueBack(value: [String:Any]) {
         let tempString = value["LocationName"] as! String
-        explainLabel.text = tempString
-        addBox(locationName: tempString)
+        if tempString != "" {
+            explainLabel.text = tempString
+            addBox(locationName: tempString)
+        }
+    }
+    
+    func writeNodeBack(nodes: [SCNNode], deleteNodes: [SCNNode]) {
+        nodeList = nodes
     }
     
     // add a box to the scene with the location name.
@@ -143,6 +157,7 @@ class ViewController: UIViewController, writeValueBackDelegate {
         let boxNode = SCNNode()
         let textNode = SCNNode()
         boxNode.geometry = box
+        boxNode.name = locationName
         textNode.geometry = text
         let boxPosition = SCNVector3(0,0,-0.6)
         let textPosition = SCNVector3(0,0.1,0)
