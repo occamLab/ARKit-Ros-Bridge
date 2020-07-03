@@ -10,18 +10,24 @@ import UIKit
 import ARKit
 
 protocol writeNodeBackDelegate: class {
-    func writeNodeBack(nodes: [SCNNode], deleteNodes: [SCNNode])
+    func writeNodeBack(nodes: [LocationData], deleteNodes: [LocationData])
+}
+
+class LocationTableViewCell: UITableViewCell {
+    @IBOutlet weak var locationImageView: UIImageView!
+    @IBOutlet weak var locationTextLabel: UILabel!
 }
 
 class ManageLocationController: UITableViewController {
     
-    var nodeList: [SCNNode] = []
-    var deleteNodeList: [SCNNode] = []
+    var nodeList: [LocationData] = []
+    var deleteNodeList: [LocationData] = []
     
     weak var delegate: writeNodeBackDelegate?
     
     override func viewDidLoad() {
-        super.viewDidLoad() 
+        super.viewDidLoad()
+        tableView.rowHeight = 150
         //print(nodeList[0].name!)
     }
     
@@ -42,10 +48,11 @@ class ManageLocationController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CountryCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "LocationCell", for: indexPath) as! LocationTableViewCell
 
-        cell.textLabel?.text = nodeList[indexPath.row].name!
-        
+        cell.locationTextLabel?.text = nodeList[indexPath.row].node.name!
+        cell.locationTextLabel?.sizeToFit()
+        cell.locationImageView?.image = nodeList[indexPath.row].picture
         //cell.textLabel?.text = "test"
         return cell
     }

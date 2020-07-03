@@ -11,6 +11,16 @@ import ARKit
 import FirebaseDatabase
 import FirebaseStorage
 
+class LocationData {
+    var node: SCNNode
+    var picture: UIImage
+    
+    init(node: SCNNode, picture: UIImage) {
+        self.node = node
+        self.picture = picture
+    }
+}
+
 class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDelegate {
     
     //MARK: Properties
@@ -46,7 +56,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     var currentBoxNode: SCNNode = SCNNode()
     var currentTextNode: SCNNode = SCNNode()
     
-    var nodeList: [SCNNode] = []
+    var nodeList: [LocationData] = []
     
     /// Begin an ARSession when the app first loads
     override func viewDidLoad() {
@@ -106,7 +116,9 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
                 self.performSegue(withIdentifier: "SetLocation", sender: self)
             } else if isMovingBox == true {
                 isMovingBox = false
-                nodeList.append(currentBoxNode)
+                let snapshot = self.sceneView.snapshot()
+                let locationData = LocationData(node: currentBoxNode, picture: snapshot)
+                nodeList.append(locationData)
                 currentTextNode = SCNNode()
                 currentBoxNode = SCNNode()
                 sender.setTitle("Save Location", for: .normal)
@@ -134,18 +146,17 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     }
     
     // function called when dismissing the save location view
-    func writeValueBack(value: [String:Any]) {
-        let tempString = value["LocationName"] as! String
-        if tempString != "" {
+    func writeValueBack(value: [String:String]) {
+        if let tempString = value["LocationName"] {
             explainLabel.text = tempString
             addBox(locationName: tempString)
         }
     }
     
-    func writeNodeBack(nodes: [SCNNode], deleteNodes: [SCNNode]) {
+    func writeNodeBack(nodes: [LocationData], deleteNodes: [LocationData]) {
         nodeList = nodes
         for x in deleteNodes {
-            let name = x.name!
+            let name = x.node.name!
             if let childNode = sceneView.scene.rootNode.childNode(withName: name, recursively: false) {
                 childNode.removeFromParentNode()
             }

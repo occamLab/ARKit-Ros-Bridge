@@ -11,7 +11,7 @@ import CoreLocation
 
 // protocol needed to send the data back as dismissing this view
 protocol writeValueBackDelegate: class {
-    func writeValueBack(value: [String:Any])
+    func writeValueBack(value: [String:String])
 }
 
 class SaveLocationController: UIViewController, CLLocationManagerDelegate, UITextFieldDelegate {
@@ -43,14 +43,20 @@ class SaveLocationController: UIViewController, CLLocationManagerDelegate, UITex
     
     //
     @IBAction func enterButton(_ sender: Any) {
-        var dataDic: [String:Any] = [:]
+        var dataDic: [String:String] = [:]
         dataDic["LocationName"] = locationName
         dataDic["locationAddress"] = locationAddress.text
-        dataDic["isComplete"] = true
+        dataDic["Latitude"] = latitudeLabel.text
+        dataDic["Longitude"] = longitudeLabel.text
         
-        self.delegate?.writeValueBack(value: dataDic)
-        //self.dismiss(animated: true, completion: nil)
-        self.navigationController?.popViewController(animated: true)
+        if dataDic["LocationName"] != "" {
+            self.delegate?.writeValueBack(value: dataDic)
+            self.navigationController?.popViewController(animated: true)
+        } else {
+            let alert = UIAlertController(title: "Information Missing", message: "Please check if every required field is complete", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: true)
+        }
     }
     
     // calles getAddress function when pressed
@@ -65,7 +71,7 @@ class SaveLocationController: UIViewController, CLLocationManagerDelegate, UITex
     // function is called whenever location info changes.
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let coor = manager.location?.coordinate {
-            print("latitude" + String(coor.latitude) + "/ longitude" + String(coor.longitude))
+            //print("latitude" + String(coor.latitude) + "/ longitude" + String(coor.longitude))
             longitudeLabel.text = String(coor.longitude)
             latitudeLabel.text = String(coor.latitude)
             longitudeLabel.sizeToFit()
