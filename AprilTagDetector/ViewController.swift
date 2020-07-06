@@ -14,10 +14,12 @@ import FirebaseStorage
 class LocationData {
     var node: SCNNode
     var picture: UIImage
+    var textNode: SCNNode
     
-    init(node: SCNNode, picture: UIImage) {
+    init(node: SCNNode, picture: UIImage, textNode: SCNNode) {
         self.node = node
         self.picture = picture
+        self.textNode = textNode
     }
 }
 
@@ -117,7 +119,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
             } else if isMovingBox == true {
                 isMovingBox = false
                 let snapshot = self.sceneView.snapshot()
-                let locationData = LocationData(node: currentBoxNode, picture: snapshot)
+                let locationData = LocationData(node: currentBoxNode, picture: snapshot, textNode: currentTextNode)
                 nodeList.append(locationData)
                 currentTextNode = SCNNode()
                 currentBoxNode = SCNNode()
@@ -128,7 +130,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         }
     }
     
-    
+    //move to manage location view when tapped
     @IBAction func manageButtonTapped(_ sender: Any) {
         self.performSegue(withIdentifier: "LocationInfo", sender: self)
     }
@@ -153,16 +155,13 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         }
     }
     
+    // function called when dismissing the manage location view
+    // updates the nodes according to how the user editted them
     func writeNodeBack(nodes: [LocationData], deleteNodes: [LocationData]) {
         nodeList = nodes
         for x in deleteNodes {
-            let name = x.node.name!
-            if let childNode = sceneView.scene.rootNode.childNode(withName: name, recursively: false) {
-                childNode.removeFromParentNode()
-            }
-            if let childNodeText = sceneView.scene.rootNode.childNode(withName: name + "Text", recursively: false) {
-                childNodeText.removeFromParentNode()
-            }
+            x.node.removeFromParentNode()
+            x.textNode.removeFromParentNode()
         }
     }
     
