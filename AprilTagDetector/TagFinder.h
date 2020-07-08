@@ -23,11 +23,13 @@
 struct AprilTags{
     int number;
     double poseData[16];
+    double imagePoints[8];
 };
 
 
 @property (nonatomic, strong) NSMutableArray *tags;
 @property struct AprilTags april;
+@property struct vpCameraParameters cam;
 @property (atomic, readonly) vpDetectorAprilTag* detector;
 @property (atomic, readonly) std::vector<vpHomogeneousMatrix> cMo;
 

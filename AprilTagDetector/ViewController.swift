@@ -6,6 +6,8 @@
 //  Copyright © 2020 OccamLab. All rights reserved.
 //
 
+// TODO: maybe add support for snap tag to vertical (or maybe that should be handled on the mapping side).  Note that it is not as easy as I would have hoped due to the fact that the tag data seem to be in a slightly different format (maybe they are in ROS coordinate conventions???)
+
 import UIKit
 import ARKit
 import FirebaseDatabase
