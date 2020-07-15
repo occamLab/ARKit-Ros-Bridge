@@ -15,11 +15,13 @@ class LocationData {
     var node: SCNNode
     var picture: UIImage
     var textNode: SCNNode
+    var poseId: Int
     
-    init(node: SCNNode, picture: UIImage, textNode: SCNNode) {
+    init(node: SCNNode, picture: UIImage, textNode: SCNNode, poseId: Int) {
         self.node = node
         self.picture = picture
         self.textNode = textNode
+        self.poseId = poseId
     }
 }
 
@@ -44,6 +46,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     let aprilTagQueue = DispatchQueue(label: "edu.occamlab.apriltagfinder", qos: DispatchQoS.userInitiated)
     var tagData:[[Any]] = []
     var poseData:[[Any]] = []
+    var locationData:[[Any]] = []
     var poseId: Int = 0
     
     var firebaseRef: DatabaseReference!
@@ -53,6 +56,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     //boolean to check whether the camera found tag or not
     var foundTag: Bool = false
     var isMovingBox: Bool = false
+    var recordCurrentLocation: Bool = false
     
     // will save current box object in control
     var currentBoxNode: SCNNode = SCNNode()
@@ -118,11 +122,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
                 self.performSegue(withIdentifier: "SetLocation", sender: self)
             } else if isMovingBox == true {
                 isMovingBox = false
-                let snapshot = self.sceneView.snapshot()
-                let locationData = LocationData(node: currentBoxNode, picture: snapshot, textNode: currentTextNode)
-                nodeList.append(locationData)
-                currentTextNode = SCNNode()
-                currentBoxNode = SCNNode()
+                recordCurrentLocation = true
                 sender.setTitle("Save Location", for: .normal)
             }
         } else {
@@ -162,6 +162,11 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         for x in deleteNodes {
             x.node.removeFromParentNode()
             x.textNode.removeFromParentNode()
+            for (index, element) in locationData.enumerated() {
+                if element[17] as! Int == x.poseId {
+                    locationData.remove(at: index)
+                }
+            }
         }
     }
     
@@ -242,7 +247,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         let (cameraFrame, timestamp) = getCameraFrame()
         let mapImage = convertToUIImage(cameraFrame: cameraFrame!)
         let mapId = String(timestamp!).replacingOccurrences(of: ".", with: "") + mapName
-        let mapJsonFile: [String: Any] = ["map_id": mapId, "camera_intrinsics": getCameraIntrinsics(), "pose_data": poseData, "tag_data": tagData]
+        let mapJsonFile: [String: Any] = ["map_id": mapId, "camera_intrinsics": getCameraIntrinsics(), "pose_data": poseData, "tag_data": tagData, "location_data": locationData]
         
         let imagePath = "myTestFolder/" + mapId + ".jpg"
         let filePath = "myTestFolder/" + mapId + ".json"
@@ -270,18 +275,30 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         if cameraFrame != nil {
             recordPoseData(cameraFrame: cameraFrame!, timestamp: timestamp!, poseId: poseId)
             recordTags(cameraFrame: cameraFrame!, timestamp: timestamp!, poseId: poseId)
+            recordLocationData(cameraFrame: cameraFrame!, timestamp: timestamp!, poseId: poseId)
             poseId += 1
             
             if isMovingBox == true {
                 updateCurrentBoxPosition()
             }
-            
         }
     }
     
     /// Append new pose data to list
     @objc func recordPoseData(cameraFrame: ARFrame, timestamp: Double, poseId: Int) {
         poseData.append(getCameraCoordinates(cameraFrame: cameraFrame, timestamp: timestamp, poseId: poseId))
+    }
+    
+    @objc func recordLocationData(cameraFrame: ARFrame, timestamp: Double, poseId: Int) {
+        if recordCurrentLocation == true {
+            let snapshot = self.sceneView.snapshot()
+            let tempLocationData = LocationData(node: currentBoxNode, picture: snapshot, textNode: currentTextNode, poseId: poseId)
+            nodeList.append(tempLocationData)
+            locationData.append(getLocationCoordinates(cameraFrame: cameraFrame, timestamp: timestamp, poseId: poseId))
+            recordCurrentLocation = false
+            currentTextNode = SCNNode()
+            currentBoxNode = SCNNode()
+        }
     }
     
     /// Append new april tag data to list
@@ -327,6 +344,16 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         let scene = SCNMatrix4(cameraTransform)
         
         let fullMatrix: [Any] = [scene.m11, scene.m12, scene.m13, scene.m14, scene.m21, scene.m22, scene.m23, scene.m24, scene.m31, scene.m32, scene.m33, scene.m34, scene.m41, scene.m42, scene.m43, scene.m44, timestamp, poseId]
+        
+        return fullMatrix
+    }
+    
+    func getLocationCoordinates(cameraFrame: ARFrame, timestamp: Double, poseId: Int) -> [Any] {
+        let locationNode = currentBoxNode
+        let nodeTransform = locationNode.simdTransform
+        let scene = SCNMatrix4(nodeTransform)
+        
+        let fullMatrix: [Any] = [scene.m11, scene.m12, scene.m13, scene.m14, scene.m21, scene.m22, scene.m23, scene.m24, scene.m31, scene.m32, scene.m33, scene.m34, scene.m41, scene.m42, scene.m43, scene.m44, timestamp, poseId, locationNode.name!]
         
         return fullMatrix
     }

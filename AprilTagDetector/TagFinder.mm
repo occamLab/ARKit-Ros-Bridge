@@ -67,7 +67,7 @@
     
      // Detect AprilTag
      vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
-     double tagSize = 0.175; // Size of OccamLab april tags
+     double tagSize = 0.166; // Size of OccamLab april tags
      float quad_decimate = 3.0;
      int nThreads = 1;
     
