@@ -259,14 +259,14 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
 
         // Upload raw file json
         if let jsonData = try? JSONSerialization.data(withJSONObject: mapJsonFile, options: []) {
-            firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"]))
+            firebaseStorageRef.child(filePath).putData(jsonData, metadata: StorageMetadata(dictionary: ["contentType": "application/json"])){ (metadata, error) in
+                // Write to maps node in database
+                self.firebaseRef.child("maps").child(mapId).setValue(["name": mapName, "image": imagePath, "raw_file": filePath])
+                
+                // Write to unprocessed maps node in database
+                self.firebaseRef.child("unprocessed_maps").child(mapId).setValue(filePath)
+            }
         }
-
-        // Write to maps node in database
-        firebaseRef.child("maps").child(mapId).setValue(["name": mapName, "image": imagePath, "raw_file": filePath])
-        
-        // Write to unprocessed maps node in database
-        firebaseRef.child("unprocessed_maps").child(mapId).setValue(filePath)
     }
     
     // record data
@@ -308,9 +308,8 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         }
         isProcessingFrame = true
         let uiimage = convertToUIImage(cameraFrame: cameraFrame)
-        let rotatedImage = imageRotatedByDegrees(oldImage: uiimage, deg: 90)
         aprilTagQueue.async {
-            let arTags = self.getArTags(cameraFrame: cameraFrame, rotatedImage: rotatedImage, timeStamp: timestamp, poseId: poseId)
+            let arTags = self.getArTags(cameraFrame: cameraFrame, image: uiimage, timeStamp: timestamp, poseId: poseId)
             if !arTags.isEmpty {
                 self.tagData.append(arTags)
             }
@@ -359,9 +358,9 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     }
     
     /// Finds all april tags in the frame
-    func getArTags(cameraFrame: ARFrame, rotatedImage: UIImage, timeStamp: Double, poseId: Int) -> [Any] {
+    func getArTags(cameraFrame: ARFrame, image: UIImage, timeStamp: Double, poseId: Int) -> [Any] {
         let intrinsics = cameraFrame.camera.intrinsics.columns
-        f.findTags(rotatedImage, intrinsics.1.y, intrinsics.0.x, intrinsics.2.y, intrinsics.2.x)
+        f.findTags(image, intrinsics.0.x, intrinsics.1.y, intrinsics.2.x, intrinsics.2.y)
         var tagArray: Array<AprilTags> = Array()
         let numTags = f.getNumberOfTags()
         var poseMatrix: [Any] = []
@@ -372,7 +371,10 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
 
             for i in 0...tagArray.count-1 {
                 let pose = tagArray[i].poseData
-                poseMatrix += [tagArray[i].number, pose.0, pose.1, pose.2, pose.3, pose.4, pose.5, pose.6, pose.7, pose.8, pose.9, pose.10, pose.11, pose.12, pose.13, pose.14, pose.15, timeStamp, poseId]
+                var simdPose = simd_float4x4(rows: [float4(Float(pose.0), Float(pose.1), Float(pose.2),Float(pose.3)), float4(Float(pose.4), Float(pose.5), Float(pose.6), Float(pose.7)), float4(Float(pose.8), Float(pose.9), Float(pose.10), Float(pose.11)), float4(Float(pose.12), Float(pose.13), Float(pose.14), Float(pose.15))])
+                // TODO: it feels like we are doing something wrong here (if we didn't do this transform could we simplify the Invisible Map code?)
+                simdPose = simdPose.rotate(radians: Float.pi/2, 0, 0, 1)
+                poseMatrix += [tagArray[i].number, simdPose.columns.0.x, simdPose.columns.1.x, simdPose.columns.2.x, simdPose.columns.3.x, simdPose.columns.0.y, simdPose.columns.1.y, simdPose.columns.2.y, simdPose.columns.3.y, simdPose.columns.0.z, simdPose.columns.1.z, simdPose.columns.2.z, simdPose.columns.3.z, simdPose.columns.0.w, simdPose.columns.1.w, simdPose.columns.2.w, simdPose.columns.3.w, timeStamp, poseId]
             }
             DispatchQueue.main.async {
                 if self.foundTag == false {
@@ -396,28 +398,6 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         let height = res?.height
         
         return String(format: "%f,%f,%f,%f,%f,%f,%f", columns!.0.x, columns!.1.y, columns!.2.x, columns!.2.y, columns!.2.z, width!, height!)
-    }
-    
-    /// Rotates an image clockwise
-    func imageRotatedByDegrees(oldImage: UIImage, deg degrees: CGFloat) -> UIImage {
-        //Calculate the size of the rotated view's containing box for our drawing space
-        let rotatedViewBox: UIView = UIView(frame: CGRect(x: 0, y: 0, width: oldImage.size.width, height: oldImage.size.height))
-        let t: CGAffineTransform = CGAffineTransform(rotationAngle: degrees * CGFloat.pi / 180)
-        rotatedViewBox.transform = t
-        let rotatedSize: CGSize = rotatedViewBox.frame.size
-        //Create the bitmap context
-        UIGraphicsBeginImageContext(rotatedSize)
-        let bitmap: CGContext = UIGraphicsGetCurrentContext()!
-        //Move the origin to the middle of the image so we will rotate and scale around the center.
-        bitmap.translateBy(x: rotatedSize.width / 2, y: rotatedSize.height / 2)
-        //Rotate the image context
-        bitmap.rotate(by: (degrees * CGFloat.pi / 180))
-        //Now, draw the rotated/scaled image into the context
-        bitmap.scaleBy(x: 1.0, y: -1.0)
-        bitmap.draw(oldImage.cgImage!, in: CGRect(x: -oldImage.size.width / 2, y: -oldImage.size.height / 2, width: oldImage.size.width, height: oldImage.size.height))
-        let newImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return newImage
     }
     
     override func didReceiveMemoryWarning() {

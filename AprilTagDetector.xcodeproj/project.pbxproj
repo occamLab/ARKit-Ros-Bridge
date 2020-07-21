@@ -17,6 +17,7 @@
 		4BC3FE411F876C27006A29FB /* ImageConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BC3FE3E1F876C27006A29FB /* ImageConversion.mm */; };
 		4BC3FE421F876C27006A29FB /* ImageDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BC3FE401F876C27006A29FB /* ImageDisplay.mm */; };
 		4BFC47151F876DEA00C8764A /* AprilTag.png in Resources */ = {isa = PBXBuildFile; fileRef = 4BFC47141F876DEA00C8764A /* AprilTag.png */; };
+		8217EEF724C69E6100D60D37 /* simd+ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8217EEF624C69E6100D60D37 /* simd+ext.swift */; };
 		8615A85721027EE1001D75B4 /* UDPBroadcastConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8615A85621027EE1001D75B4 /* UDPBroadcastConnection.swift */; };
 		8615A85921027F16001D75B4 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8615A85821027F16001D75B4 /* Config.swift */; };
 		AD3CF3A920F696E100D6A7C0 /* visp3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD95826F20F643C3009F2BC9 /* visp3.framework */; };
@@ -45,6 +46,7 @@
 		4BC3FE3F1F876C27006A29FB /* ImageDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageDisplay.h; sourceTree = "<group>"; };
 		4BC3FE401F876C27006A29FB /* ImageDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDisplay.mm; sourceTree = "<group>"; };
 		4BFC47141F876DEA00C8764A /* AprilTag.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AprilTag.png; sourceTree = "<group>"; };
+		8217EEF624C69E6100D60D37 /* simd+ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "simd+ext.swift"; sourceTree = "<group>"; };
 		8615A85621027EE1001D75B4 /* UDPBroadcastConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UDPBroadcastConnection.swift; sourceTree = "<group>"; };
 		8615A85821027F16001D75B4 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		AD95826E20F643C3009F2BC9 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				23C214AE23808AB1007B2DA5 /* GoogleService-Info.plist */,
+				8217EEF624C69E6100D60D37 /* simd+ext.swift */,
 				AD95828020F689EB0099DA98 /* AppDelegate.swift */,
 				4BFC47141F876DEA00C8764A /* AprilTag.png */,
 				4BC3FE3D1F876C27006A29FB /* ImageConversion.h */,
@@ -272,6 +275,7 @@
 				AD95828120F689EB0099DA98 /* AppDelegate.swift in Sources */,
 				AD95827C20F6825D0099DA98 /* TagFinder.mm in Sources */,
 				4BC3FE281F876BE9006A29FB /* main.m in Sources */,
+				8217EEF724C69E6100D60D37 /* simd+ext.swift in Sources */,
 				8615A85721027EE1001D75B4 /* UDPBroadcastConnection.swift in Sources */,
 				0CA958E824A0A6A800ACAD2A /* SaveLocationController.swift in Sources */,
 				4BC3FE411F876C27006A29FB /* ImageConversion.mm in Sources */,

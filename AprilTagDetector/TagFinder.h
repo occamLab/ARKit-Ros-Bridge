@@ -3,7 +3,7 @@
 //  AprilTagDetector
 //
 //  Created by djconnolly27 on 7/11/18.
-//  Copyright © 2018 OccamLab. All rights reserved.
+//  Copyright © 2020 OccamLab. All rights reserved.
 //
 
 #ifndef TagFinder_h
@@ -23,11 +23,16 @@
 struct AprilTags{
     int number;
     double poseData[16];
+    double imagePoints[8];
+    double quatStdDev[4];
+    double rotVecStdDev[3];
+    double transVecStdDev[3];
 };
 
 
 @property (nonatomic, strong) NSMutableArray *tags;
 @property struct AprilTags april;
+@property struct vpCameraParameters cam;
 @property (atomic, readonly) vpDetectorAprilTag* detector;
 @property (atomic, readonly) std::vector<vpHomogeneousMatrix> cMo;
 

@@ -4,8 +4,6 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Use location when in use</string>
 	<key>CFBundleDisplayName</key>
 	<string>ARosBridge</string>
 	<key>CFBundleExecutable</key>
@@ -26,6 +24,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>April Tag Finder would like to use the camera to detect april tags.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Use location when in use</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
