@@ -63,6 +63,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     var currentTextNode: SCNNode = SCNNode()
     
     var nodeList: [LocationData] = []
+    var currentFrameTransform: simd_float4x4 = simd_float4x4.init()
     
     /// Begin an ARSession when the app first loads
     override func viewDidLoad() {
@@ -237,9 +238,18 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     
     /// Pop up a view to let the user name their map.
     @objc func popUpSaveView() {
-        // TODO: Create a real pop up view!
-        let mapName = "-Test"
-        sendToFirebase(mapName: mapName)
+        var mapName = "-"
+        let alert = UIAlertController(title: "Info Needed", message: "Enter Recording Name", preferredStyle: .alert)
+        alert.addTextField { (textField) in
+            textField.placeholder = "Enter Recording Name Here"
+        }
+        alert.addAction(UIAlertAction(title: "Submit", style: .default, handler: {[weak alert] (_) in
+            guard let textField = alert?.textFields?[0], let userText = textField.text else {return}
+            mapName = mapName + userText
+            self.sendToFirebase(mapName: mapName)
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
     }
     
     /// Upload pose data, last image frame to Firebase under "maps" and "unprocessed_maps" nodes
@@ -340,6 +350,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     func getCameraCoordinates(cameraFrame: ARFrame, timestamp: Double, poseId: Int) -> [Any] {
         let camera = cameraFrame.camera
         let cameraTransform = camera.transform
+        currentFrameTransform = cameraTransform
         let scene = SCNMatrix4(cameraTransform)
         
         let fullMatrix: [Any] = [scene.m11, scene.m12, scene.m13, scene.m14, scene.m21, scene.m22, scene.m23, scene.m24, scene.m31, scene.m32, scene.m33, scene.m34, scene.m41, scene.m42, scene.m43, scene.m44, timestamp, poseId]
@@ -350,7 +361,8 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
     func getLocationCoordinates(cameraFrame: ARFrame, timestamp: Double, poseId: Int) -> [Any] {
         let locationNode = currentBoxNode
         let nodeTransform = locationNode.simdTransform
-        let scene = SCNMatrix4(nodeTransform)
+        let finalTransform = currentFrameTransform.inverse * nodeTransform
+        let scene = SCNMatrix4(finalTransform)
         
         let fullMatrix: [Any] = [scene.m11, scene.m12, scene.m13, scene.m14, scene.m21, scene.m22, scene.m23, scene.m24, scene.m31, scene.m32, scene.m33, scene.m34, scene.m41, scene.m42, scene.m43, scene.m44, timestamp, poseId, locationNode.name!]
         
