@@ -109,7 +109,6 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
             // delay to avoid pressing the button again before timer ends
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: {
                 self.popUpSaveView()
-                self.clearData()
                 sender.setTitle("Start Recording", for: .normal)
             })
         }
@@ -247,6 +246,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
             guard let textField = alert?.textFields?[0], let userText = textField.text else {return}
             mapName = mapName + userText
             self.sendToFirebase(mapName: mapName)
+            self.clearData()
         }))
         
         self.present(alert, animated: true, completion: nil)
@@ -362,9 +362,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
         let locationNode = currentBoxNode
         let nodeTransform = locationNode.simdTransform
         let finalTransform = currentFrameTransform.inverse * nodeTransform
-        let scene = SCNMatrix4(finalTransform)
-        
-        let fullMatrix: [Any] = [scene.m11, scene.m12, scene.m13, scene.m14, scene.m21, scene.m22, scene.m23, scene.m24, scene.m31, scene.m32, scene.m33, scene.m34, scene.m41, scene.m42, scene.m43, scene.m44, timestamp, poseId, locationNode.name!]
+        let fullMatrix: [Any] = [finalTransform.columns.0.x, finalTransform.columns.1.x, finalTransform.columns.2.x, finalTransform.columns.3.x, finalTransform.columns.0.y, finalTransform.columns.1.y, finalTransform.columns.2.y, finalTransform.columns.3.y, finalTransform.columns.0.z, finalTransform.columns.1.z, finalTransform.columns.2.z, finalTransform.columns.3.z, finalTransform.columns.0.w, finalTransform.columns.1.w, finalTransform.columns.2.w, finalTransform.columns.3.w, timestamp, poseId, locationNode.name!]
         
         return fullMatrix
     }
@@ -384,7 +382,7 @@ class ViewController: UIViewController, writeValueBackDelegate, writeNodeBackDel
             for i in 0...tagArray.count-1 {
                 let pose = tagArray[i].poseData
                 var simdPose = simd_float4x4(rows: [float4(Float(pose.0), Float(pose.1), Float(pose.2),Float(pose.3)), float4(Float(pose.4), Float(pose.5), Float(pose.6), Float(pose.7)), float4(Float(pose.8), Float(pose.9), Float(pose.10), Float(pose.11)), float4(Float(pose.12), Float(pose.13), Float(pose.14), Float(pose.15))])
-                // TODO: it feels like we are doing something wrong here (if we didn't do this transform could we simplify the Invisible Map code?)
+                // TODO: investigate if we could get rid of this.  This interacts with the camera_to_odom_transform in convert_json.py of the invisible-map-generation repository.  We can probably get rid of the need for this rotation if we compensate in that file
                 simdPose = simdPose.rotate(radians: Float.pi/2, 0, 0, 1)
                 poseMatrix += [tagArray[i].number, simdPose.columns.0.x, simdPose.columns.1.x, simdPose.columns.2.x, simdPose.columns.3.x, simdPose.columns.0.y, simdPose.columns.1.y, simdPose.columns.2.y, simdPose.columns.3.y, simdPose.columns.0.z, simdPose.columns.1.z, simdPose.columns.2.z, simdPose.columns.3.z, simdPose.columns.0.w, simdPose.columns.1.w, simdPose.columns.2.w, simdPose.columns.3.w, timeStamp, poseId]
             }
