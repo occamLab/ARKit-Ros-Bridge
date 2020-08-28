@@ -16,4 +16,4 @@ def extractUDP(udp_port):
 
     while True:
         data, addr = sock.recvfrom(1024) # buffer size is 1024 bytes
-        return(data)
+        return(data.decode('utf-8'))

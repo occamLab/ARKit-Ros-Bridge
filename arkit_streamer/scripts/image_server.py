@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 OccamLab: ARKit ROS Bridge - Image Server
@@ -50,7 +50,7 @@ class ImageServer:
     def complete_packet_assembly(self, image_number):
         ''' Finish assembling an image when all of its packets have been received. '''
         self.image_data[image_number]['payload'].sort()
-        image = ''
+        image = bytearray()
         for packet in self.image_data[image_number]['payload']:
             image += packet[1]
 
@@ -87,24 +87,25 @@ class ImageServer:
         ''' Publish image and camera intrinsics data. '''
         while not rospy.is_shutdown():
             data, addr = self.sock.recvfrom(1600)
+            data = bytearray(data)
             packet_offset = 0
             image_number, packet_number = struct.unpack('<BB', data[packet_offset:packet_offset + 2])
             packet_offset += 2
 
             # Check if the packet is the first in a given image
             if packet_number == 0:
-                total_packets = struct.unpack('<B', data[packet_offset])[0]
+                total_packets = data[packet_offset]
                 packet_offset += 1
                 self.image_data[image_number] = {}
                 self.image_data[image_number]['packets_expected'] = total_packets
                 self.image_data[image_number]['packets_received'] = 1
 
-                time_bytes = struct.unpack('<B', data[packet_offset])[0]
+                time_bytes = data[packet_offset]
                 packet_offset += 1
-                intrinsic_bytes = struct.unpack('<B', data[packet_offset])[0]
+                intrinsic_bytes = data[packet_offset]
                 packet_offset += 1
                 stampedTime = data[packet_offset:packet_offset+time_bytes]  # TODO: remove magic numbers of 5 and 4
-                intrinsic_data = data[packet_offset+time_bytes:packet_offset+time_bytes+intrinsic_bytes]
+                intrinsic_data = data[packet_offset+time_bytes:packet_offset+time_bytes+intrinsic_bytes].decode('utf-8')
                 intrinsics_vals = [float(x) for x in intrinsic_data.split(',')]
 
                 self.image_data[image_number]['timestamp'] = stampedTime

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 '''
 OccamLab: ARKit ROS Bridge - April Tag Server
@@ -10,7 +10,7 @@ import socket
 import numpy as np
 from math import pi
 import rospy
-from apriltags_ros.msg import AprilTagDetection, AprilTagDetectionArray
+from apriltag_ros.msg import AprilTagDetection, AprilTagDetectionArray
 from geometry_msgs.msg import PoseStamped, Point32
 from std_msgs.msg import Float64, Float64MultiArray, String, Int32
 from tf.transformations import quaternion_multiply, quaternion_about_axis, quaternion_from_matrix, translation_from_matrix
@@ -49,8 +49,8 @@ class AprilTagServer:
         for tags in self.april_tags:
             ar = tags.split(",")
             current_tag = AprilTagDetection()
-            current_tag.id = int(ar[0])
-            current_tag.size = 0.165
+            current_tag.id = [int(ar[0])]
+            current_tag.size = [0.165]
             current_tag.pose.header.stamp = rospy.Time(float(self.ios_clock_offset) + float(ar[17]))
             current_tag.pose.header.frame_id = "camera"
             tag = [float(x) for x in ar[1:17]]
@@ -58,26 +58,27 @@ class AprilTagServer:
             new_mat = mat.A
             trans = translation_from_matrix(new_mat)
             quat = quaternion_from_matrix(new_mat)
-            current_tag.pose.pose.position.x = trans[0]
-            current_tag.pose.pose.position.y = trans[1]
-            current_tag.pose.pose.position.z = trans[2]
+            current_tag.pose.pose.pose.position.x = trans[0]
+            current_tag.pose.pose.pose.position.y = trans[1]
+            current_tag.pose.pose.pose.position.z = trans[2]
 
-            current_tag.pose.pose.orientation.x = quat[0]
-            current_tag.pose.pose.orientation.y = quat[1]
-            current_tag.pose.pose.orientation.z = quat[2]
-            current_tag.pose.pose.orientation.w = quat[3]
+            current_tag.pose.pose.pose.orientation.x = quat[0]
+            current_tag.pose.pose.pose.orientation.y = quat[1]
+            current_tag.pose.pose.pose.orientation.z = quat[2]
+            current_tag.pose.pose.pose.orientation.w = quat[3]
             self.msg.detections.append(current_tag)
 
     def run(self):
         ''' Publish april tag data and enable visualization of the april tag poses. '''
         while not rospy.is_shutdown():
             self.pose_data, addr = self.sock.recvfrom(1024)
+            self.pose_data = self.pose_data.decode('utf-8')
             if len(self.pose_data) > 5:
                 self.april_tags = self.pose_data.split(",TAG,")[1:]
             self.process_tag_pose()
             for tag in self.msg.detections:
-                self.br.sendTransform([tag.pose.pose.position.x, tag.pose.pose.position.y, tag.pose.pose.position.z],
-                                      [tag.pose.pose.orientation.x, tag.pose.pose.orientation.y, tag.pose.pose.orientation.z, tag.pose.pose.orientation.w],
+                self.br.sendTransform([tag.pose.pose.pose.position.x, tag.pose.pose.pose.position.y, tag.pose.pose.pose.position.z],
+                                      [tag.pose.pose.pose.orientation.x, tag.pose.pose.pose.orientation.y, tag.pose.pose.pose.orientation.z, tag.pose.pose.pose.orientation.w],
                                        tag.pose.header.stamp,
                                       "tag_" + str(tag.id),
                                       "camera")
