@@ -6,7 +6,7 @@ Built For OccamLab @Olin College 2018
 
 
 $$e^x$$
-$$ e^x $$
+$$ e^{2x} $$
 
 
 ### Running the ARKit ROS Streamer
