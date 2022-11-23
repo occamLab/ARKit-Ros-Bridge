@@ -28,6 +28,10 @@ add_service_files(
  Service1.srv
  Service2.srv
 )
+
+$$e^x$$
+$$ e^x $$
+
 ```
 And replace the placeholder `Service*.srv` with `phone.srv`.
 Finally, in your `package.xml` file, you will need to copy the following below the line reading `<buildtool_depend>catkin</buildtool_depend>`:
