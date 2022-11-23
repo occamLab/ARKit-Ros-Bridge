@@ -4,12 +4,6 @@ This will stream data from an iOS device to a computer via UDP in order to manip
 
 Built For OccamLab @Olin College 2018
 
-
-blah blah $$e^x$$
-
-test $$e^{2x}$$ test
-
-
 ### Running the ARKit ROS Streamer
 
 ##### Setting up your computer to run the streamer with ROS:
