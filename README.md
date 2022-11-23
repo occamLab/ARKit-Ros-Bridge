@@ -4,6 +4,11 @@ This will stream data from an iOS device to a computer via UDP in order to manip
 
 Built For OccamLab @Olin College 2018
 
+
+$$e^x$$
+$$ e^x $$
+
+
 ### Running the ARKit ROS Streamer
 
 ##### Setting up your computer to run the streamer with ROS:
@@ -28,9 +33,6 @@ add_service_files(
  Service1.srv
  Service2.srv
 )
-
-$$e^x$$
-$$ e^x $$
 
 ```
 And replace the placeholder `Service*.srv` with `phone.srv`.
